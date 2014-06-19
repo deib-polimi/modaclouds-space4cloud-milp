@@ -16,8 +16,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="target/dependency/jsch-0.1.51.jar"/>
-	<classpathentry kind="lib" path="target/dependency/mysql-connector-java-5.1.30.jar"/>
-	<classpathentry kind="lib" path="target/dependency/qos-models-1.1-s4cextension-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
