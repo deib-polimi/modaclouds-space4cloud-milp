@@ -54,6 +54,15 @@ public class ConstraintXML {
 		if (!FilePathConstraint.equalsIgnoreCase(""))
 			loadModel(FilePathConstraint);
 	}
+	public static void main(String[] args) {
+		String model = "C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\OfBiz-Constraint.xml";
+		ConstraintXML constraintxml = new ConstraintXML(model);
+		double avgMaxRT = constraintxml.getAvgMaxResponseTime();
+		double maxMaxRT = constraintxml.getMaxMaxResponseTime();
+		double minMaxRT = constraintxml.getMinMaxResponseTime();
+		System.out.println();
+		
+	}
 
 	// loads XML document in DOM parser
 	public boolean loadModel(String Filepath) {
@@ -151,26 +160,18 @@ public class ConstraintXML {
 			String metric = newMetric.getTextContent();
 			// if metric = RAM then it is memory constraint
 			if (metric.equalsIgnoreCase("ResponseTime")) {
-				// receiving the unit
-				List<Element> newListMaxValues = getElements(newConstr, "unit");
-				Element newMaxValue = newListMaxValues.get(0);
-				String unit = newMaxValue.getTextContent();
-				
+			
 				
 				// receiving response time constraints
-				newListMaxValues = getElements(newConstr, "hasMaxValue");
-				newMaxValue = newListMaxValues.get(0);
+				List<Element>  newListMaxValues = getElements(newConstr, "hasMaxValue");
+				Element newMaxValue = newListMaxValues.get(0);
 				double value = 0.0;
 				try {
-					value = (double)Integer.parseInt(newMaxValue.getTextContent());
+					value = (double)Integer.parseInt(newMaxValue.getTextContent()) * 0.001; //get the value in milliseconds and save it in seconds
 				} catch (Exception e) {
+					e.printStackTrace();
 					value = 0.0;
-				}
-				
-				switch (unit) {
-				case "ms":
-					value *= 0.001;
-				}
+				}			
 				
 				responseTimes.add(value);
 			}

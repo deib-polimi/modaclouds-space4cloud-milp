@@ -97,7 +97,7 @@ public class ScpTo {
 				System.exit(0);
 			}
 
-			File _lfile = new File(lfile);
+			File _lfile = new File(lfile); 
 
 			if (ptimestamp) {
 				command = "T " + (_lfile.lastModified() / 1000) + " 0";

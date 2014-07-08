@@ -214,10 +214,10 @@ public class CreateAddInfData {
 		if (cw != null) {
 			for (ClosedWorkloadElement we : cw.getWorkloadElement()) {
 				int hour = we.getHour();
-//				newAddInfList.arrivalrate[hour-1] = (double)we.getPopulation() / (10 + newAddInfList.MaxSystemResponseTime);
-				newAddInfList.arrivalrate[hour-1] = (double)we.getPopulation() / we.getThinkTime();
-				newAddInfList.thinkTimes[hour-1] = we.getThinkTime();
-				newAddInfList.TimeIndex[hour-1] = hour;
+//				newAddInfList.arrivalrate[hour] = (double)we.getPopulation() / (10 + newAddInfList.MaxSystemResponseTime);
+				newAddInfList.arrivalrate[hour] = (double)we.getPopulation() / we.getThinkTime();
+				newAddInfList.thinkTimes[hour] = we.getThinkTime();
+				newAddInfList.TimeIndex[hour] = hour;
 			}
 		}
 		else {
@@ -226,10 +226,10 @@ public class CreateAddInfData {
 			if (ow != null) {
 				for (OpenWorkloadElement we : ow.getWorkloadElement()) {
 					int hour = we.getHour();
-//					newAddInfList.arrivalrate[hour-1] = (double)we.getPopulation() / (10 + newAddInfList.MaxSystemResponseTime);
-					newAddInfList.arrivalrate[hour-1] = (double)we.getPopulation() / 10;
-					newAddInfList.thinkTimes[hour-1] = 10.0;
-					newAddInfList.TimeIndex[hour-1] = hour;
+//					newAddInfList.arrivalrate[hour] = (double)we.getPopulation() / (10 + newAddInfList.MaxSystemResponseTime);
+					newAddInfList.arrivalrate[hour] = (double)we.getPopulation() / 10;
+					newAddInfList.thinkTimes[hour] = 10.0;
+					newAddInfList.TimeIndex[hour] = hour;
 				}
 			}
 			else {
