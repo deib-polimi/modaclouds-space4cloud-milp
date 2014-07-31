@@ -33,10 +33,10 @@ import javax.swing.JOptionPane;
  */
 public class Config {
 	
-	// receives main configuration from opened XML document
+	
 	public static ClassOptions SetConfiguration(String projectPath, String workingDirectory,
 			String resourceModel, String usageModel, String allocationModel, String repositoryModel, String systemModel,
-			String constraintFile, String usageModelExtFile) {
+			String constraintFile, String usageModelExtFile, String sshHost, String sshPassword, String sshUsername){
 		
 		if (!projectPath.substring(projectPath.length() - 1).equals(File.separator))
 			projectPath += File.separator;
@@ -84,15 +84,26 @@ public class Config {
 		NewOptions.DBUserName="moda";
 		NewOptions.DBPassword="modaclouds";
 		
-		NewOptions.SSHhost="specclient1.dei.polimi.it";
-		NewOptions.SSHUserName="";
-		NewOptions.SSHPassword="";
+		NewOptions.SSHhost = sshHost;
+		NewOptions.SSHPassword = sshPassword;
+		NewOptions.SSHUserName = sshUsername;
 		
-		initSshData(NewOptions);
 		
 		NewOptions.Set = true;
 		
 		return NewOptions;
+				
+	}
+	
+	// receives main configuration from opened XML document
+	public static ClassOptions SetConfiguration(String projectPath, String workingDirectory,
+			String resourceModel, String usageModel, String allocationModel, String repositoryModel, String systemModel,
+			String constraintFile, String usageModelExtFile) {
+		
+		ClassOptions NewOptions = SetConfiguration(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile,null,null,null);		
+		initSshData(NewOptions);				
+		return NewOptions;
+		
 	}
 	
 	private static void initSshData(ClassOptions NewOptions) {
@@ -105,7 +116,7 @@ public class Config {
 		if (f.exists()) {
 			try {
 				conf.load(new FileInputStream(f.toString()));
-				
+				NewOptions.SSHhost = conf.getProperty("SSHhost");
 				NewOptions.SSHUserName = conf.getProperty("SSHUserName");
 				NewOptions.SSHPassword = conf.getProperty("SSHPassword");
 				
@@ -118,12 +129,24 @@ public class Config {
 		}
 		
 		if (askData) {
+			
+			String host = null;
+			
+			do {
+				host = (String) JOptionPane.showInputDialog(null,
+					"Insert the host address of the SSH server:",
+					"SSH Data configuration (1/3)",
+					JOptionPane.PLAIN_MESSAGE, null, null, "");
+			
+			} while(host == null || host.length() == 0);
+			
+			
 			String username = null;
 			
 			do {
 				username = (String) JOptionPane.showInputDialog(null,
 					"Insert the username for the SSH server:",
-					"SSH Data configuration (1/2)",
+					"SSH Data configuration (2/3)",
 					JOptionPane.PLAIN_MESSAGE, null, null, "");
 			
 			} while (username == null || username.length() == 0);
@@ -133,11 +156,12 @@ public class Config {
 			do {
 				password = (String) JOptionPane.showInputDialog(null,
 					"Insert the password for the SSH server:",
-					"SSH Data configuration (2/2)",
+					"SSH Data configuration (3/3)",
 					JOptionPane.PLAIN_MESSAGE, null, null, "");
 			
 			} while (password == null || password.length() == 0);
 			
+			conf.setProperty("SSHhost", host);
 			conf.setProperty("SSHUserName", username);
 			conf.setProperty("SSHPassword", password);
 			
@@ -148,6 +172,7 @@ public class Config {
 				e.printStackTrace();
 			}
 			
+			NewOptions.SSHhost = host;
 			NewOptions.SSHUserName = username;
 			NewOptions.SSHPassword = password;
 		}

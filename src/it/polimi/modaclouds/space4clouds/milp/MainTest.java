@@ -63,6 +63,9 @@ public class MainTest {
 		// programLogger.warn("Generation of the first solution disabled at the moment!");
 
 		// ///////////////////////////
+		RussianEvaluator.setSSH_HOST("specclient1.dei.polimi.it");
+		RussianEvaluator.setSSH_PASSWORD("modaclouds");
+		RussianEvaluator.setSSH_USER_NAME("s4c");
 		RussianEvaluator re = new RussianEvaluator(new File(USAGE_MODEL_EXTENSION), new File(CONSTRAINT));
 		String[] providersInitial = {"Amazon"};
 		re.setProviders(providersInitial);

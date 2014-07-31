@@ -50,11 +50,15 @@ public class RussianEvaluator {
 	private static String USERNAME = "moda";
 	private static String PASSWORD = "modaclouds";
 	
+	private static String SSH_HOST = "";
+	private static String SSH_PASSWORD = "";
+	private static String SSH_USER_NAME = "";
+	
 	public RussianEvaluator(File usageModelExtFile, File constraintFile) {
 		solver = new Solver(MainTest.PROJECT_PATH, MainTest.WORKING_DIRECTORY,
 				MainTest.RESOURCE_MODEL, MainTest.USAGE_MODEL, MainTest.ALLOCATION_MODEL, MainTest.REPOSITORY_MODEL,
 				Paths.get(Paths.get(MainTest.RESOURCE_MODEL).getParent().toString(), "default.system").toString(),
-				constraintFile.getAbsolutePath(), usageModelExtFile.getAbsolutePath());
+				constraintFile.getAbsolutePath(), usageModelExtFile.getAbsolutePath(),SSH_HOST,SSH_PASSWORD,SSH_USER_NAME);
 		
 		solver.setDeleteTempFiles(false);
 		
@@ -178,6 +182,18 @@ public class RussianEvaluator {
 	public void setStartingSolution(File f) {
 		solver.setStartingSolution(f);
 		reset();
+	}
+
+	public static void setSSH_HOST(String sSH_HOST) {
+		SSH_HOST = sSH_HOST;
+	}
+
+	public static void setSSH_PASSWORD(String sSH_PASSWORD) {
+		SSH_PASSWORD = sSH_PASSWORD;
+	}
+
+	public static void setSSH_USER_NAME(String sSH_USER_NAME) {
+		SSH_USER_NAME = sSH_USER_NAME;
 	}
 
 }

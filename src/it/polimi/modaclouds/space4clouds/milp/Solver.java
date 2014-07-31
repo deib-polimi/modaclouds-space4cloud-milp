@@ -41,16 +41,16 @@ public class Solver {
 	
 	public Solver(String projectPath, String workingDirectory,
 			String resourceModel, String usageModel,
-			String allocationModel, String repositoryModel, String systemModel, String constraintFile, String usageModelExtFile) {
+			String allocationModel, String repositoryModel, String systemModel, String constraintFile, String usageModelExtFile,String sshHost, String sshPassword, String sshUserName) {
 		if (!projectPath.substring(projectPath.length() - 1).equals(File.separator))
 			projectPath += File.separator;
 		if (!workingDirectory.substring(workingDirectory.length() - 1).equals(File.separator))
 			workingDirectory += File.separator;
 		
-		init(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile);
+		init(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile,sshHost, sshPassword, sshUserName);
 	}
 	
-	public Solver(String projectPath, String workingDirectory, String constraintFile, String usageModelExtFile) {
+	public Solver(String projectPath, String workingDirectory, String constraintFile, String usageModelExtFile, String sshHost, String sshPassword, String sshUserName) {
 		if (!projectPath.substring(projectPath.length() - 1).equals(File.separator))
 			projectPath += File.separator;
 		if (!workingDirectory.substring(workingDirectory.length() - 1).equals(File.separator))
@@ -62,14 +62,13 @@ public class Solver {
 		String resourceModel   = projectPath + "default.resourceenvironment";
 		String systemModel     = projectPath + "default.system";
 		
-		init(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile);
+		init(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile, sshHost, sshPassword, sshUserName);
 	}
 	
 	private void init(String projectPath, String workingDirectory,
 			String resourceModel, String usageModel,
-			String allocationModel, String repositoryModel, String systemModel, String constraintFile, String usageModelExtFile) {
-		
-		options = Config.SetConfiguration(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile);
+			String allocationModel, String repositoryModel, String systemModel, String constraintFile, String usageModelExtFile, String sshHost, String sshPassword, String sshUserName) {
+		options = Config.SetConfiguration(projectPath, workingDirectory, resourceModel, usageModel, allocationModel, repositoryModel, systemModel, constraintFile, usageModelExtFile, sshHost, sshPassword, sshUserName);
 	}
 	
 	public void compute() {
