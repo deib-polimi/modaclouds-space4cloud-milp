@@ -100,7 +100,7 @@ public class ScpTo {
 			File _lfile = new File(lfile); 
 
 			if (ptimestamp) {
-				command = "T " + (_lfile.lastModified() / 1000) + " 0";
+				command = "T" + (_lfile.lastModified() / 1000) + " 0";
 				command += (" " + (_lfile.lastModified() / 1000) + " 0\n");
 				out.write(command.getBytes());
 				out.flush();

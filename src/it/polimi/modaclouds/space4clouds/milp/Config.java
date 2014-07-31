@@ -84,7 +84,7 @@ public class Config {
 		NewOptions.DBUserName="moda";
 		NewOptions.DBPassword="modaclouds";
 		
-		NewOptions.SSHhost="ch14r4.dei.polimi.it";
+		NewOptions.SSHhost="specclient1.dei.polimi.it";
 		NewOptions.SSHUserName="";
 		NewOptions.SSHPassword="";
 		

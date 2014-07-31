@@ -23,14 +23,14 @@ import java.io.File;
 
 public class MainTest {
 	
-	public static final String PROJECT_PATH="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple"; 
+	public static final String PROJECT_PATH="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple"; 
 	public static final String WORKING_DIRECTORY="space4cloud";
-	public static final String RESOURCE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\default.resourceenvironment";
-	public static final String USAGE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\default.usagemodel";
-	public static final String ALLOCATION_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\default.allocation";
-	public static final String REPOSITORY_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\default.repository";
-	public static final String USAGE_MODEL_EXTENSION="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\OfBiz-UsageExtension.xml";
-	public static final String CONSTRAINT="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD2.0\\OfBizSimple\\OfBiz-Constraint.xml";
+	public static final String RESOURCE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.resourceenvironment";
+	public static final String USAGE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.usagemodel";
+	public static final String ALLOCATION_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.allocation";
+	public static final String REPOSITORY_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.repository";
+	public static final String USAGE_MODEL_EXTENSION="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\OfBiz-UsageExtension.xml";
+	public static final String CONSTRAINT="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\OfBiz-Constraint.xml";
 	
 
 	public static void main(String[] args) {

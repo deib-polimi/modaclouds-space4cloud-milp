@@ -64,7 +64,7 @@ public class ClassOptions {
 	public ClassOptions() {
 		// directory path on AMPL server (not to be changed)
 		// this folder contains bash-script and AMPL model
-		UploadPath = "/home/specmeter/new64/";
+		UploadPath = "/home/s4c/new64/";
 
 		// this options set names of temp files
 		FilePathSaveData = "data.dat";

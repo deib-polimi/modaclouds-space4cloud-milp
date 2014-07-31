@@ -42,9 +42,11 @@ public class AMPLrun {
 				out.println("model modelstartingsolution.mod;");
 //				out.println("option presolve 0;");
 			} else
-				out.println("model model.mod;");
+				out.println("model model.mod;"); 
 			out.println("data data.dat;");
-			out.println("option solver '/usr/optimization/ILOG2/cplex/bin/x86-64_sles10_4.1/cplexamp';");
+			
+			//TODO: what happens if the solver is not there?
+			out.println("option solver '/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp';");
 			out.println("option show_stats 1;");
 			if (!TimeLimit.equalsIgnoreCase(""))
 				out.println("option timelimit " + TimeLimit + ";");
