@@ -21,7 +21,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.polimi.modaclouds.space4cloud</groupId>
 	<artifactId>milp</artifactId>
-	<version>0.0.8</version>
+	<version>0.0.9</version>
 
 	<licenses>
 		<license>
@@ -104,7 +104,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.9.1</version>
@@ -125,8 +125,8 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
+			</plugin> -->
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-scm-publish-plugin</artifactId>
 				<version>1.1</version>
@@ -137,9 +137,9 @@
 					<content>${project.reporting.outputDirectory}/apidocs</content>
 					<skipDeletedFiles>true</skipDeletedFiles>
 					<pubScmUrl>scm:git:git@github.com:${github.user.name}/${github.repository.name}.git</pubScmUrl>
-					<scmBranch>gh-pages</scmBranch> <!-- branch with static site -->
+					<scmBranch>gh-pages</scmBranch> branch with static site
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>

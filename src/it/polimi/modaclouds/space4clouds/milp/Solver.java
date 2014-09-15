@@ -228,9 +228,10 @@ public class Solver {
 	}
 	
 	public void setStartingSolution(File f) {
-		if (f != null && f.exists() && options.MAP > 1 && getNumOfProviders(f) == options.MAP)
+		if (f != null && f.exists()) { //&& options.MAP > 1 && getNumOfProviders(f) == options.MAP)
+			options.MAP = getNumOfProviders(f);
 			options.FilePathStartingSolution = f.getAbsolutePath();
-		else
+		} else
 			options.FilePathStartingSolution = null;
 		
 		reset();

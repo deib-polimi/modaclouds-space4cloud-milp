@@ -23,14 +23,14 @@ import java.io.File;
 
 public class MainTest {
 	
-	public static final String PROJECT_PATH="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple"; 
-	public static final String WORKING_DIRECTORY="space4cloud";
-	public static final String RESOURCE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.resourceenvironment";
-	public static final String USAGE_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.usagemodel";
-	public static final String ALLOCATION_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.allocation";
-	public static final String REPOSITORY_MODEL="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\default.repository";
-	public static final String USAGE_MODEL_EXTENSION="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\OfBiz-UsageExtension.xml";
-	public static final String CONSTRAINT="C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple\\OfBiz-Constraint.xml";
+	public static final String PROJECT_PATH = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz - Copia"; //"C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple"; 
+	public static final String WORKING_DIRECTORY = "space4cloud";
+	public static final String RESOURCE_MODEL = PROJECT_PATH + "\\default.resourceenvironment";
+	public static final String USAGE_MODEL = PROJECT_PATH + "\\default.usagemodel";
+	public static final String ALLOCATION_MODEL = PROJECT_PATH + "\\default.allocation";
+	public static final String REPOSITORY_MODEL = PROJECT_PATH + "\\default.repository";
+	public static final String USAGE_MODEL_EXTENSION = PROJECT_PATH + "//ume-1000.xml"; //"\\OfBiz-UsageExtension.xml";
+	public static final String CONSTRAINT = PROJECT_PATH + "\\OfBiz-Constraint.xml";
 	
 
 	public static void main(String[] args) {
@@ -67,8 +67,10 @@ public class MainTest {
 		RussianEvaluator.setSSH_PASSWORD("modaclouds");
 		RussianEvaluator.setSSH_USER_NAME("s4c");
 		RussianEvaluator re = new RussianEvaluator(new File(USAGE_MODEL_EXTENSION), new File(CONSTRAINT));
-		String[] providersInitial = {"Amazon"};
-		re.setProviders(providersInitial);
+//		String[] providersInitial = {"Amazon"};
+//		re.setProviders(providersInitial);
+		
+		re.setStartingSolution(new File(PROJECT_PATH + "\\soltmp.xml"));
 
 		try {
 			re.eval();
