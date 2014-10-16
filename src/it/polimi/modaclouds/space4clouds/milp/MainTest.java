@@ -23,7 +23,7 @@ import java.io.File;
 
 public class MainTest {
 	
-	public static final String PROJECT_PATH = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz - Copia"; //"C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple"; 
+	public static final String PROJECT_PATH = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\workspace\\Piccolo3"; //runtime-New_configuration\\OfBiz"; //"C:\\Users\\GiovanniPaolo\\Workspaces\\runtime-SPACE4CLOUD\\OfBizSimple"; 
 	public static final String WORKING_DIRECTORY = "space4cloud";
 	public static final String RESOURCE_MODEL = PROJECT_PATH + "\\default.resourceenvironment";
 	public static final String USAGE_MODEL = PROJECT_PATH + "\\default.usagemodel";
@@ -63,14 +63,14 @@ public class MainTest {
 		// programLogger.warn("Generation of the first solution disabled at the moment!");
 
 		// ///////////////////////////
-		RussianEvaluator.setSSH_HOST("specclient1.dei.polimi.it");
-		RussianEvaluator.setSSH_PASSWORD("modaclouds");
-		RussianEvaluator.setSSH_USER_NAME("s4c");
+		RussianEvaluator.setSSH_HOST("ch14r4.dei.polimi.it");
+		RussianEvaluator.setSSH_PASSWORD("modaclouds2014");
+		RussianEvaluator.setSSH_USER_NAME("specmeter");
 		RussianEvaluator re = new RussianEvaluator(new File(USAGE_MODEL_EXTENSION), new File(CONSTRAINT));
-//		String[] providersInitial = {"Amazon"};
-//		re.setProviders(providersInitial);
+		String[] providersInitial = {"Microsoft"}; //{"Amazon"}; //, "Microsoft", "Flexiscale"};
+		re.setProviders(providersInitial);
 		
-		re.setStartingSolution(new File(PROJECT_PATH + "\\soltmp.xml"));
+//		re.setStartingSolution(new File(PROJECT_PATH + "\\soltmp.xml"));
 
 		try {
 			re.eval();
