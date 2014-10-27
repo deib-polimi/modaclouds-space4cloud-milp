@@ -56,21 +56,27 @@ public class SQLParser {
 	private boolean[] ProviderIsUsed = null;
 
 	// connection and statement to SQL database
-	private Connection conn = null;
-	private Statement st = null;
-
-	// constructor
-	public SQLParser(String driver, String url, String base, String user, String password) {
-		parseit(driver, url, base, user, password);
-	}
+	private static Connection conn = null;
+//	private Statement st = null;
 
 	private ArrayList<String> allowedProviders = null;
 	private ArrayList<String> allowedRegions = null;
 	
+	private static String driver;
+	private static String url;
+	private static String dbName;
+	private static String userName;
+	private static String password;
+	
 	public SQLParser(ClassOptions currOptions) {
 		allowedProviders = currOptions.AllowedProviders;
 		allowedRegions = currOptions.AllowedRegions;
-		parseit(currOptions.DBDriver, currOptions.SqlDBUrl, currOptions.DBName, currOptions.DBUserName, currOptions.DBPassword);
+		driver =currOptions.DBDriver;
+		url = currOptions.SqlDBUrl;
+		dbName = currOptions.DBName;
+		userName = currOptions.DBUserName;
+		password = currOptions.DBPassword;
+		parseit();
 	}
 
 	// this function is used for requests which receives information about
@@ -79,6 +85,8 @@ public class SQLParser {
 	private int getTableCount(String SQLRequest) {
 		int res = 0;
 		try {
+			Connection conn = getConnection();
+			Statement st = conn.createStatement();
 			ResultSet temprs = st.executeQuery(SQLRequest);
 			if (temprs.next()) {
 				String Temp = temprs.getString(1);
@@ -86,6 +94,8 @@ public class SQLParser {
 			}
 			if (temprs != null)
 				temprs.close();
+			if (st != null)
+				st.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -94,6 +104,37 @@ public class SQLParser {
 	
 	private String researchSqlProviders = "";
 	private String researchSqlRegions = "";
+	
+	private static void connect() throws SQLException {
+		try {
+			Class.forName(driver).newInstance();
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		conn = DriverManager
+				.getConnection(url + dbName, userName, password);
+		if(conn == null)
+			System.err.println("Error in connecting to the database");
+	}
+
+	/**
+	 * Returns the Connection to the MySQL database.
+	 * 
+	 * @return the Connection instance.
+	 * @throws SQLException 
+	 */
+	private static Connection getConnection() {
+		try {
+			if (conn == null || conn.isClosed() || !conn.isValid(10000))
+				connect();
+			return conn;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 
 	// main function for interaction with database
 	// driver - the jdbc driver
@@ -101,16 +142,13 @@ public class SQLParser {
 	// base - name of database
 	// user - database login
 	// password - database password
-	public int parseit(String driver, String url, String base, String user, String password) {
+	public int parseit() {
 		try {
 
 			// creates connection
-			Class.forName(driver);
-			conn = DriverManager.getConnection(url + base, user, password);
-
-			if (conn == null)
-				return 1;
-			st = conn.createStatement();
+			conn = getConnection();
+			
+			Statement st = conn.createStatement();
 
 			if (allowedProviders == null) {
 				// receives amount of providers
@@ -275,7 +313,7 @@ public class SQLParser {
 				
 				IndexTypeOfProvider[j]++;
 			}
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 

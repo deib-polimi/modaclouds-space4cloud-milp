@@ -21,7 +21,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.polimi.modaclouds.space4cloud</groupId>
 	<artifactId>milp</artifactId>
-	<version>0.0.9</version>
+	<version>0.0.11</version>
 
 	<licenses>
 		<license>
@@ -79,7 +79,7 @@
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
-				<version>0.11</version>
+				<version>0.10</version>
 				<configuration>
 					<merge>true</merge> <!-- deploy without removing existing artifacts on the repo -->
 					<message>Maven artifacts for ${project.artifactId}
@@ -161,7 +161,7 @@
 						<exclude>LICENSE.txt</exclude>
 					</excludes>
 				</configuration>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<id>check-headers</id>
 						<phase>verify</phase>
@@ -169,7 +169,7 @@
 							<goal>format</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 		</plugins>
 	</build>
