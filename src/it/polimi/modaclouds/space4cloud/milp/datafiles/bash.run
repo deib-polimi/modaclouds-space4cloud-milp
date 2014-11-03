@@ -1,0 +1,4 @@
+rm /home/s4c/new64/log.tmp
+rm /home/s4c/new64/rez.out
+cd /usr/optimization/ILOG/ampl20060626.cplex101
+./ampl /home/s4c/new64/AMPL.run;

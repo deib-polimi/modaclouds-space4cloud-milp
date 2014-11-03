@@ -1,0 +1,31 @@
+set CONTAINER;
+set PROVIDER;
+set CLASS_REQUEST;
+set TYPE_VM;
+set TIME_INT;
+set COMPONENT;
+param ProbabilityToBeInComponent{CLASS_REQUEST, COMPONENT} >= 0;
+param ArrRate{TIME_INT} >= 0;
+param Alpha{CLASS_REQUEST} >=0, <=1;
+param MaximumSR{CLASS_REQUEST, COMPONENT} >= 0;
+param PartitionComponents{COMPONENT, CONTAINER} binary;
+param Speed{TYPE_VM, PROVIDER, CONTAINER} >= 0;
+param Cost{TYPE_VM, PROVIDER, CONTAINER} >= 0;
+param MaxResponseTime{CLASS_REQUEST, COMPONENT} >=0;
+param MinProv > 0 integer;
+param MaxVMPerContainer > 0 integer;
+param MinArrRate{PROVIDER} >= 0, <=1;
+param AmountVM{TYPE_VM, PROVIDER, CONTAINER, TIME_INT} >= 0 integer;
+param X{PROVIDER} binary;
+param W{TYPE_VM, PROVIDER, CONTAINER} binary;
+var PartialArrRate{PROVIDER, TIME_INT} >= 0;
+var DiffResponseTime{CLASS_REQUEST, PROVIDER, CONTAINER, TIME_INT, COMPONENT};
+maximize Min_Response_Time: sum{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0} DiffResponseTime[k, p, i, t, c];
+# minimize Min_Response_Time: min{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0} MaximumSR[k, c]*MaxResponseTime[k, c]*sum{v in TYPE_VM}(AmountVM[v, p, i, t]*Speed[v, p, i]) - PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]*sum{d in CLASS_REQUEST, g in COMPONENT: ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0} (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g]) + sum{v in TYPE_VM}(AmountVM[v, p, i, t]);
+subject to ArrRatePerProvider1 {p in PROVIDER, t in TIME_INT}: X[p]*MinArrRate[p]*ArrRate[t] <= PartialArrRate[p, t];
+subject to ArrRatePerProvider2 {p in PROVIDER, t in TIME_INT}: PartialArrRate[p, t] <= X[p]*ArrRate[t];
+subject to Efficiency{t in TIME_INT}: sum{p in PROVIDER} PartialArrRate[p, t] = ArrRate [t];
+
+#subject to Response_Time{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0}: PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]*sum{d in CLASS_REQUEST, g in COMPONENT: ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0} (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g]) + sum{v in TYPE_VM}(AmountVM[v, p, i, t]) <= MaximumSR[k, c]*MaxResponseTime[k, c]*sum{v in TYPE_VM}(AmountVM[v, p, i, t]*Speed[v, p, i]);
+
+subject to Assign_Response_Time{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0}: DiffResponseTime[k, p, i, t, c] = MaximumSR[k, c]*MaxResponseTime[k, c]*sum{v in TYPE_VM}(AmountVM[v, p, i, t]*Speed[v, p, i]) - PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]*sum{d in CLASS_REQUEST, g in COMPONENT: ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0} (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g]) + sum{v in TYPE_VM}(AmountVM[v, p, i, t]);

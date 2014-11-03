@@ -1,0 +1,18 @@
+cd %s;
+reset;
+option log_file 'log.tmp';
+model %s;
+data %s;
+option solver '%s';
+option show_stats 1;
+option timelimit 720;
+option cplex_options 'timing=1';
+solve;
+display X,PartialArrRate,AmountVM > rez.out;
+display {v in TYPE_VM, p in PROVIDER, i in CONTAINER:W[v,p,i]>0} (W[v,p,i]), W >> rez.out;
+display sum{t in TIME_INT, p in PROVIDER, i in CONTAINER, v in TYPE_VM} (Cost[v, p, i]*AmountVM[v, p, i, t]) > shortrez.out;
+display {p in PROVIDER, t in TIME_INT, i in CONTAINER, v in TYPE_VM:AmountVM[v,p,i,t]>0} (AmountVM[v,p,i,t],PartialArrRate[p,t]) >> shortrez.out;
+option log_file '';
+close shortrez.out;
+close rez.out;
+close log.tmp;
