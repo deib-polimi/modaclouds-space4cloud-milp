@@ -55,5 +55,7 @@ public final class SQLRequestsCollection {
     		"FROM cost,cloudresource_cost,cloudresource_allocation,virtualhwresource,iaas_service,iaas_service_composedof, cloudprovider " +
     		"WHERE cloudresource_cost.Cost_id=cost.id AND cost.unit='per_hour' AND cloudresource_allocation.VirtualHWResource_id=virtualhwresource.id AND virtualhwresource.type='memory' AND cloudresource_cost.CloudResource_id=cloudresource_allocation.CloudResource_id AND cloudresource_allocation.CloudResource_id=iaas_service_composedof.CloudResource_id AND iaas_service_composedof.IaaS_id=iaas_service.id AND cloudprovider.id = iaas_service.cloudprovider_id AND cost.description NOT LIKE 'Reserved%%'%s%s;";
     
+    public final static String AvaliabilityRequest =
+    		"SELECT id, name, 0.95 as value FROM cloudprovider WHERE true%s;";
 
 }

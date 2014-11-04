@@ -38,6 +38,8 @@ public class DataCollection {
 	public int MaxVMPerContainer=5000;//maximum amount of VMs in container
 	public int MinProv=0;//minimum amount of providers
 	
+	public double[] availabilities = null;
+	
 	//container for default values of AMPL parameters
 	public DefaultDataCollection defaultvalues=null;
 	
@@ -53,6 +55,9 @@ public class DataCollection {
 		MaxResponseTime=new double [CountClasses][CountComponents];
 		MinArrRate=new double [CountProviders];
 		Alpha=new double [CountClasses];
+		
+		availabilities = new double[CountProviders];
+		
 		defaultvalues=new DefaultDataCollection();
 	}
 }

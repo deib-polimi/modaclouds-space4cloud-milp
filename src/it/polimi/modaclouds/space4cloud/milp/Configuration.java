@@ -60,7 +60,6 @@ public class Configuration {
 	public static String WORKING_DIRECTORY = "space4cloud";
 	
 	public static String SolverTimeLimit = "720";//time limit for CPLEX solver in seconds
-	public static int[] MemoryDemand = null;
 	public static double MAR = 200.0;		//max value of arrival rate (without noise)
 	public static double MMAR = 0.1;		//max value of minimum proportion of arrival rate per provider (without noise)
 	public static int MAP = 1;				//minimum number of providers
@@ -78,17 +77,6 @@ public class Configuration {
 			Files.deleteIfExists(Paths.get(RUN_MODEL_STARTING_SOLUTION));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	static {
-		initmemorydemand(5,0);
-	}
-	
-	public static void initmemorydemand(int count, int defval) {
-		MemoryDemand = new int[count];
-		for (int i = 0; i < count; i++) {
-			MemoryDemand[i] = defval;
 		}
 	}
 

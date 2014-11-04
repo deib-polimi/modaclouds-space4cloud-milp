@@ -28,8 +28,8 @@ public class SshConnector {
 		newScpTo.sendfile(Configuration.RUN_DATA, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_DATA);
 		newScpTo.sendfile(Configuration.RUN_FILE, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_FILE);
 		
-//		newScpTo.sendfile(Configuration.RUN_MODEL_STANDARD, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STANDARD);
-//		newScpTo.sendfile(Configuration.RUN_MODEL_STARTING_SOLUTION, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STARTING_SOLUTION);
+		newScpTo.sendfile(Configuration.RUN_MODEL_STANDARD, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STANDARD);
+		newScpTo.sendfile(Configuration.RUN_MODEL_STARTING_SOLUTION, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STARTING_SOLUTION);
 
 		// this block runs bash-script on AMPL server
 		ExecSSH newExecSSH = new ExecSSH();

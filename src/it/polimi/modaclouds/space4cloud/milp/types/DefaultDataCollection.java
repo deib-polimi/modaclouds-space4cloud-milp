@@ -30,5 +30,6 @@ public class DefaultDataCollection {
 	public double MaxResponseTime=0.04;//Maximum Response time for component
 	public double MinArrRate=0.2;//minimum arrival rate per provider
 	public double Alpha=0.1;//proportion of arrival rate on class k
+	public double availability = 0.95;
 
 }

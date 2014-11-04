@@ -54,6 +54,8 @@ public class SQLParser {
 	// Database contains list of providers and only subset of them provides IaaS
 	// this array is used to select them
 	private boolean[] ProviderIsUsed = null;
+	
+	private double[] availabilities = null;
 
 	// connection and statement to SQL database
 	private static Connection conn = null;
@@ -150,79 +152,99 @@ public class SQLParser {
 			ProviderId = new int[countproviders];
 			ProviderName = new String[countproviders];
 			CountTypesByProviders = new int[countproviders];
+			availabilities = new double[countproviders];
+			
+			int count = 0;
 
-			// receives list of providers
-			ResultSet rp = st.executeQuery(SQLRequestsCollection.ProviderRequest);
-			int schet = 0;
-			while (rp.next()) {
-				if (allowedProviders == null || allowedProviders.contains(rp.getString(2))) {
-					String Fstr = rp.getString(1);
-					ProviderId[schet] = Integer.parseInt(Fstr);
-					Fstr = rp.getString(2);
-					ProviderName[schet] = Fstr;
-					schet++;
+			{
+				// receives list of providers
+				ResultSet rp = st.executeQuery(SQLRequestsCollection.ProviderRequest);
+				while (rp.next()) {
+					if (allowedProviders == null || allowedProviders.contains(rp.getString(2))) {
+						String Fstr = rp.getString(1);
+						ProviderId[count] = Integer.parseInt(Fstr);
+						Fstr = rp.getString(2);
+						ProviderName[count] = Fstr;
+						count++;
+					}
 				}
+				if (rp != null)
+					rp.close();
 			}
-			if (rp != null)
-				rp.close();
 
 			// call constructor of temp container of VM types
 			SqlBaseParsElement newSqlBaseParsElement = new SqlBaseParsElement(
 					fullcounttypes);
+			
+			{
+				// receives parameters of VM types (without memory)
+				// saves it in newSqlBaseParsElement
+				// newSqlBaseParsElement contains list of all VM types without
+				// partition by providers
+				ResultSet rs = null;
+				try {
+					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequest, researchSqlProviders, researchSqlRegions));
+				} catch (Exception e) {
+					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequestNoRegion, researchSqlProviders));
+				}
+				count = 0; // simple counter by number of VM types
+				while (rs.next()) {
+					String Fstr = rs.getString(1);
+					newSqlBaseParsElement.ServiceName[count] = Fstr;
+					Fstr = rs.getString(2);
+					newSqlBaseParsElement.Provider[count] = Fstr;
+					Fstr = rs.getString(3);
+					newSqlBaseParsElement.ProviderId[count] = Integer
+							.parseInt(Fstr);
+					Fstr = rs.getString(4);
+					newSqlBaseParsElement.processingRate[count] = Double
+							.parseDouble(Fstr);
+					Fstr = rs.getString(5);
+					newSqlBaseParsElement.numberOfReplicas[count] = Double
+							.parseDouble(Fstr);
+					Fstr = rs.getString(6);
+					newSqlBaseParsElement.cost[count] = Double.parseDouble(Fstr);
+					Fstr = rs.getString(7);
+					newSqlBaseParsElement.TypeName[count] = Fstr;
+					
+					Fstr = rs.getString(8);
+					newSqlBaseParsElement.Region[count] = Fstr;
+					
+					// increase amount of VM types for provider with id
+					// ProviderId[schet]
+					IncrementTypesByProviderId(newSqlBaseParsElement.ProviderId[count]);
+					count++;
+				}
+				if (rs != null)
+					rs.close();
+			}
 
-			// receives parameters of VM types (without memory)
-			// saves it in newSqlBaseParsElement
-			// newSqlBaseParsElement contains list of all VM types without
-			// partition by providers
-			ResultSet rs = null;
-			try {
-				rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequest, researchSqlProviders, researchSqlRegions));
-			} catch (Exception e) {
-				rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequestNoRegion, researchSqlProviders));
+			{
+				// receives memory parameters for VM types
+				ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.MemoryRequest, researchSqlProviders, researchSqlRegions));
+				count = 0;
+				while (rm.next()) {
+					String Fstr = rm.getString(1);
+					newSqlBaseParsElement.MemorySize[count] = Double
+							.parseDouble(Fstr);
+					// System.out.println(newSqlBaseParsElement.MemorySize[schet]);
+					count++;
+				}
+				if (rm != null)
+					rm.close();
 			}
-			schet = 0; // simple counter by number of VM types
-			while (rs.next()) {
-				String Fstr = rs.getString(1);
-				newSqlBaseParsElement.ServiceName[schet] = Fstr;
-				Fstr = rs.getString(2);
-				newSqlBaseParsElement.Provider[schet] = Fstr;
-				Fstr = rs.getString(3);
-				newSqlBaseParsElement.ProviderId[schet] = Integer
-						.parseInt(Fstr);
-				Fstr = rs.getString(4);
-				newSqlBaseParsElement.processingRate[schet] = Double
-						.parseDouble(Fstr);
-				Fstr = rs.getString(5);
-				newSqlBaseParsElement.numberOfReplicas[schet] = Double
-						.parseDouble(Fstr);
-				Fstr = rs.getString(6);
-				newSqlBaseParsElement.cost[schet] = Double.parseDouble(Fstr);
-				Fstr = rs.getString(7);
-				newSqlBaseParsElement.TypeName[schet] = Fstr;
+			
+			{
+				// receives availability parameters for each provider
+				ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.AvaliabilityRequest, researchSqlProviders));
 				
-				Fstr = rs.getString(8);
-				newSqlBaseParsElement.Region[schet] = Fstr;
-				
-				// increase amount of VM types for provider with id
-				// ProviderId[schet]
-				IncrementTypesByProviderId(newSqlBaseParsElement.ProviderId[schet]);
-				schet++;
+				count = 0;
+				while (rm.next()) {
+					availabilities[count++] = rm.getDouble(3);
+				}
+				if (rm != null)
+					rm.close();
 			}
-			if (rs != null)
-				rs.close();
-
-			// receives memory parameters for VM types
-			ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.MemoryRequest, researchSqlProviders, researchSqlRegions));
-			schet = 0;
-			while (rm.next()) {
-				String Fstr = rm.getString(1);
-				newSqlBaseParsElement.MemorySize[schet] = Double
-						.parseDouble(Fstr);
-				// System.out.println(newSqlBaseParsElement.MemorySize[schet]);
-				schet++;
-			}
-			if (rm != null)
-				rm.close();
 
 			// close statement and connection
 			if (st != null)
@@ -249,6 +271,7 @@ public class SQLParser {
 				if (ProviderIsUsed[i]) {
 					newDBList.ProviderId[nschet] = ProviderId[i];
 					newDBList.ProviderName[nschet] = ProviderName[i];
+					newDBList.availabilities[nschet] = availabilities[i];
 					nschet++;
 				}
 

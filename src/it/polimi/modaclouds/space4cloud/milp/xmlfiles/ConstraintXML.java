@@ -171,34 +171,55 @@ public class ConstraintXML {
 		return responseTimes;
 	}
 	
-	public double getMaxMaxResponseTime() {
-		List<Double> responseTimes = getMaxResponseTimes();
+	private List<Double> getMinAvailabilities() {
+		ArrayList<Double> availabilities = new ArrayList<Double>();
 		
-		if (responseTimes.size() == 0)
-			return 0.0;
+		// check that document was loaded
+		if (!loadrez)
+			return availabilities;
+
+		// receiving list of constraints
+		List<Element> newConstrList = getElements(root, "constraint");
+		for (int i = 0; i < newConstrList.size(); i++) {
+			// for every container receiving its metric
+			Element newConstr = newConstrList.get(i);
+			List<Element> newListMetric = getElements(newConstr, "metric");
+			Element newMetric = newListMetric.get(0);
+			String metric = newMetric.getTextContent();
+			// if metric = Availability then that's a constraint on the availability
+			if (metric.equalsIgnoreCase("Availability")) {
+			
+				
+				// receiving availability constraints
+				List<Element>  newListMinValues = getElements(newConstr, "hasMinValue");
+				Element newMinValue = newListMinValues.get(0);
+				double value = 0.0;
+				try {
+					value = (double)Integer.parseInt(newMinValue.getTextContent()) * 0.01; //get the value in % and save it as a double from 0 to 1
+				} catch (Exception e) {
+					e.printStackTrace();
+					value = 0.0;
+				}			
+				
+				availabilities.add(value);
+			}
+		}
 		
-		double max = Double.MIN_VALUE;
-		
-		for (double d : responseTimes)
-			if (d > max)
-				max = d;
-		
-		return max;
+		return availabilities;
 	}
 	
-	public double getMinMaxResponseTime() {
-		List<Double> responseTimes = getMaxResponseTimes();
+	public double getAvgMinAvailability() {
+		List<Double> availabilities = getMinAvailabilities();
 		
-		if (responseTimes.size() == 0)
-			return 0.0;
+		if (availabilities.size() == 0)
+			return 1.0;
 		
-		double min = Double.MAX_VALUE;
+		double sum = 0.0;
 		
-		for (double d : responseTimes)
-			if (d < min)
-				min = d;
+		for (double d : availabilities)
+			sum += d;
 		
-		return min;
+		return sum/availabilities.size();
 	}
 	
 	public double getAvgMaxResponseTime() {

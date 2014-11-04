@@ -15,6 +15,10 @@ param MaxResponseTime{CLASS_REQUEST, COMPONENT} >=0;
 param MinProv > 0 integer;
 param MaxVMPerContainer > 0 integer;
 param MinArrRate{PROVIDER} >= 0, <=1;
+
+param Availability{PROVIDER} >= 0, <=1;
+param MaxUnavailability > 0, <= 1;
+
 var X{PROVIDER} binary;
 var W{TYPE_VM, PROVIDER, CONTAINER} binary;
 var PartialArrRate{PROVIDER, TIME_INT} >= 0;
@@ -28,3 +32,5 @@ subject to Select_Types {p in PROVIDER, i in CONTAINER}: sum{v in TYPE_VM} W[v, 
 subject to VMAmount{v in TYPE_VM, p in PROVIDER, i in CONTAINER, t in TIME_INT}: W[v, p, i] <= AmountVM[v, p, i, t];
 subject to VMAmount2{v in TYPE_VM, p in PROVIDER, i in CONTAINER, t in TIME_INT}: AmountVM[v, p, i, t] <= MaxVMPerContainer*W[v, p, i];
 subject to Response_Time{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0}: PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]*sum{d in CLASS_REQUEST, g in COMPONENT: ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0} (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g]) + sum{v in TYPE_VM}(AmountVM[v, p, i, t]) <= MaximumSR[k, c]*MaxResponseTime[k, c]*sum{v in TYPE_VM}(AmountVM[v, p, i, t]*Speed[v, p, i]);
+
+subject to AvailabilityConstraint: sum{p in PROVIDER} (log(1 - Availability[p]) * X[p]) <= log(MaxUnavailability);

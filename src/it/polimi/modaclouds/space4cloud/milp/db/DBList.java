@@ -50,6 +50,8 @@ public class DBList {
 
 	// minimum amount of providers
 	public int MinProv = 0;
+	
+	public double[] availabilities;
 
 	// constructor
 	public DBList(int count) {
@@ -57,6 +59,7 @@ public class DBList {
 		ProviderId = new int[count];
 		ProviderName = new String[count];
 		MinArrRate = new double[count];
+		availabilities = new double[count];
 	}
 
 	// index - provider's number in the program

@@ -22,7 +22,7 @@ public class Main {
 	
 	public static void mainInitialSolution(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p.properties";
+		String configuration  = basePath + "conf-private-1p-availability.properties";
 //		String solution       = basePath + "initial-solution-amazon.xml";
 		String solution       = basePath + "initial-solution-amazon-broken.xml";
 		
@@ -44,7 +44,7 @@ public class Main {
 	
 	public static void mainStandard(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p.properties";
+		String configuration  = basePath + "conf-private-1p-availability.properties";
 		
 		Solver.removeTempFiles = false;
 		
@@ -64,8 +64,28 @@ public class Main {
 				+ initialMce.getAbsolutePath());
 	}
 	
+	public static void mainAll(String[] args) {
+		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
+		String configuration  = basePath + "conf-private-1p-availability.properties";
+		
+		Solver.removeTempFiles = false;
+		
+		Solver s = new Solver(configuration);
+		
+		File resourceEnvExtFile = s.getResourceModelExt();
+		File initialSolution = s.getSolution();
+		File initialMce = s.getMultiCloudExt();
+
+		System.out.println("Generated resource model extension: "
+				+ resourceEnvExtFile.getAbsolutePath());
+		System.out.println("Generated solution: "
+				+ initialSolution.getAbsolutePath());
+		System.out.println("Generated multi cloud extension: "
+				+ initialMce.getAbsolutePath());
+	}
+	
 	public static void main(String[] args) {
-		mainStandard(args);
+		mainAll(args);
 	}
 
 }
