@@ -212,7 +212,7 @@ public class ConstraintXML {
 		List<Double> availabilities = getMinAvailabilities();
 		
 		if (availabilities.size() == 0)
-			return 1.0;
+			return 0.01;
 		
 		double sum = 0.0;
 		
