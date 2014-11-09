@@ -17,7 +17,7 @@ param MaxVMPerContainer > 0 integer;
 param MinArrRate{PROVIDER} >= 0, <=1;
 
 param Availability{PROVIDER} >= 0, <=1;
-param MaxUnavailability >= 0, <= 1;
+param MaxUnavailability > 0, <= 1;
 
 var X{PROVIDER} binary;
 var W{TYPE_VM, PROVIDER, CONTAINER} binary;

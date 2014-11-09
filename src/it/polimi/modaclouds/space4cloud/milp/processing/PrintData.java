@@ -81,7 +81,7 @@ public class PrintData {
 
 		newdatacollection.initialization();
 		
-		minAvailability = 1.0;
+		minAvailability = 0.1;
 
 		newdatacollection.MinProv = CDBList.MinProv;
 		for (int i = 0; i < newdatacollection.CountTypeVMs; i++)
