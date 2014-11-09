@@ -20,7 +20,7 @@ param X{PROVIDER} binary;
 param W{TYPE_VM, PROVIDER, CONTAINER} binary;
 
 param Availability{PROVIDER} >= 0, <=1;
-param MaxUnavailability > 0, <= 1;
+param MaxUnavailability >= 0, <= 1;
 
 var PartialArrRate{PROVIDER, TIME_INT} >= 0;
 var DiffResponseTime{CLASS_REQUEST, PROVIDER, CONTAINER, TIME_INT, COMPONENT};
