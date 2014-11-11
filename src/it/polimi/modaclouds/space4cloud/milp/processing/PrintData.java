@@ -93,10 +93,8 @@ public class PrintData {
 					// speed 0
 					if (newconstraintxml.loadrez) {
 						String ContainerId = CRList.ContainerList.Id[k];
-						String MemoryConstraintStr = newconstraintxml
+						double MemoryConstraint = newconstraintxml
 								.getMemoryConstById(ContainerId);
-						double MemoryConstraint = Double
-								.parseDouble(MemoryConstraintStr);
 						if (MemoryConstraint <= newMatrix.MemorySize[j][i]) {
 							newdatacollection.Cost[i][j][k] = newMatrix.cost[j][i];
 							newdatacollection.Speed[i][j][k] = CRList.U

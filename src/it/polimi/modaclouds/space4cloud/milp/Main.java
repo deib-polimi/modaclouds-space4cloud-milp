@@ -22,7 +22,7 @@ public class Main {
 	
 	public static void mainInitialSolution(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p-availability.properties";
+		String configuration  = basePath + "conf-optimization-1p.properties";
 //		String solution       = basePath + "initial-solution-amazon.xml";
 		String solution       = basePath + "initial-solution-amazon-broken.xml";
 		
@@ -44,7 +44,7 @@ public class Main {
 	
 	public static void mainStandard(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p-availability.properties";
+		String configuration  = basePath + "conf-optimization-1p.properties";
 		
 		Solver.removeTempFiles = false;
 		
@@ -66,7 +66,7 @@ public class Main {
 	
 	public static void mainAll(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p-availability.properties";
+		String configuration  = basePath + "conf-optimization-1p.properties";
 		
 		Solver.removeTempFiles = false;
 		
@@ -85,7 +85,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		mainAll(args);
+		mainStandard(args);
 	}
 
 }

@@ -27,7 +27,6 @@ import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSolution;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSystem;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsUsage;
 
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -127,23 +126,10 @@ public class Parser {
 		List<String> newProviderList = newparssql.newDBList
 				.getProviderList();
 		
-		if (Configuration.USAGE_MODEL_EXTENSION != null && Files.exists(Paths.get(Configuration.USAGE_MODEL_EXTENSION)) &&
-				Configuration.CONSTRAINTS != null && Files.exists(Paths.get(Configuration.CONSTRAINTS))) {
-			// generates data for AddInfFile starting from the usagemodelext file
-			newcreateAddInfData.generateData(newProviderList,
-					newparssql.newDBList.countProviders, Configuration.USAGE_MODEL_EXTENSION,
-					Configuration.MMAR, Configuration.MAP, Configuration.CONSTRAINTS);
-		} else {
-			// generates data for AddInfFile
-			// newProviderList - list of provider names
-			// newparssql.newDBList.countProviders - amount of providers
-			// 100,0.1 - maximum value (without noise) of arrival rate and
-			// minimum arrival rate per provider
-			// 1,1 - minimum amount of providers and Maximum System Response
-			// time
-			newcreateAddInfData.generateData(newProviderList,
-					newparssql.newDBList.countProviders, Configuration.MAR, Configuration.MMAR, Configuration.MAP, Configuration.MSR);
-		}
+		// generates data for AddInfFile starting from the usagemodelext file
+		newcreateAddInfData.generateData(newProviderList,
+				newparssql.newDBList.countProviders, Configuration.USAGE_MODEL_EXTENSION,
+				Configuration.MMAR, Configuration.MAP, Configuration.CONSTRAINTS);
 		
 		// saves generated data in corresponding XML file
 		if (Configuration.ExportAddInf)

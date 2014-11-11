@@ -16,17 +16,12 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.xmlfiles;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import it.polimi.modaclouds.qos_models.schema.Constraint;
+import it.polimi.modaclouds.qos_models.schema.Constraints;
+import it.polimi.modaclouds.qos_models.util.XMLHelper;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 
 //this class reads model constraint file
 public class ConstraintXML {
@@ -34,36 +29,54 @@ public class ConstraintXML {
 	// path to file with model constraints
 	public String FilePathConstraint = "";
 
-	// IDs of containers
-	public List<String> Ids = null;
-	// memory demands of containers
-	public List<String> MemoryConstValues = null;
-
-	// XML document
-	private Document maindoc;
-
 	// is true, if document was loaded
 	public boolean loadrez = false;
 
-	// root element of loaded document
-	private Element root;
+	private LinkedHashMap<String, Float> memoryConstraints = new LinkedHashMap<String, Float>();
+	private LinkedHashMap<String, Float> responseTimesConstraints = new LinkedHashMap<String, Float>();
+	private LinkedHashMap<String, Float> availabilitiesConstraints = new LinkedHashMap<String, Float>();
+	private LinkedHashMap<String, Float> workloadPercentagesConstraints = new LinkedHashMap<String, Float>();
 
 	// constructors
 	public ConstraintXML(String FPConstr) {
 		FilePathConstraint = FPConstr;
-		if (!FilePathConstraint.equalsIgnoreCase(""))
-			loadModel(FilePathConstraint);
+		
+		extractConstraints();
 	}
+	
+	private Constraints loadedConstraints;
 
 	// loads XML document in DOM parser
-	public boolean loadModel(String Filepath) {
+	public boolean extractConstraints() {
+		if (loadrez)
+			return true;
+		
 		try {
-			File newfile = new File(Filepath);
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			maindoc = docBuilder.parse(newfile);
-			root = maindoc.getDocumentElement();
+			loadedConstraints = XMLHelper.deserialize(Paths.get(FilePathConstraint).toUri().toURL(),Constraints.class);
+			
+			for (Constraint cons : loadedConstraints.getConstraints()) {
+				
+				String metric = cons.getMetric();
+				String target = cons.getTargetResourceIDRef();
+				Float minValue = cons.getRange().getHasMinValue();
+				Float maxValue = cons.getRange().getHasMaxValue();
+				
+				switch (metric) {
+				case "RAM":
+					memoryConstraints.put(target, minValue);
+					break;
+				case "ResponseTime":
+					responseTimesConstraints.put(target, new Float(maxValue * 0.001)); // saved in seconds where expressed in ms
+					break;
+				case "Availability":
+					availabilitiesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+					break;
+				case "WorkloadPercentage":
+					workloadPercentagesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+					break;
+				}
+			}
+			
 			loadrez = true;
 		} catch (Exception e) {
 //			e.getMessage();
@@ -74,166 +87,48 @@ public class ConstraintXML {
 	}
 
 	// returns memory demand of container by id of container
-	public String getMemoryConstById(String ContainerId) {
-		String MemoryConst = "0";
-		int i = 0;
-		while ((i < Ids.size()) && (!ContainerId.equalsIgnoreCase(Ids.get(i))))
-			i++;
-		if (i < Ids.size())
-			MemoryConst = MemoryConstValues.get(i);
-		return MemoryConst;
-	}
-
-	// returns subelements of CurrentElem with names ThisType
-	private List<Element> getElements(Element CurrentElem, String ThisType) {
-		List<Element> res = new ArrayList<Element>();
-		if (!loadrez)
+	public double getMemoryConstById(String ContainerId) {
+		Float res = memoryConstraints.get(ContainerId);
+		if (res == null)
+			return 0.0;
+		else
 			return res;
-		NodeList list = CurrentElem.getElementsByTagName(ThisType);
-		for (int i = 0; i < list.getLength(); i++)
-			if (list.item(i).getNodeType() == Node.ELEMENT_NODE)
-				res.add((Element) list.item(i));
-		return res;
-	}
-
-	// receives constraints from the file
-	public int extractConstraints() {
-		// initialization
-		Ids = new ArrayList<String>();
-		MemoryConstValues = new ArrayList<String>();
-
-		// check that document was loaded
-		if (!loadrez)
-			return 1;
-
-		// receiving list of constraints
-		List<Element> NewConstrList = getElements(root, "constraint");
-		for (int i = 0; i < NewConstrList.size(); i++) {
-			// for every container receiving its metric
-			Element NewConstr = NewConstrList.get(i);
-			List<Element> NewListMetric = getElements(NewConstr, "metric");
-			Element NewMetric = NewListMetric.get(0);
-			String MetricStr = NewMetric.getTextContent();
-			// if metric = RAM then it is memory constraint
-			if (MetricStr.equalsIgnoreCase("RAM")) {
-				// receiving id of container
-				List<Element> NewListIds = getElements(NewConstr,
-						"targetResourceIDRef");
-				Element NewId = NewListIds.get(0);
-				String IdStr = NewId.getTextContent();
-				Ids.add(IdStr);
-
-				// receiving memory constraint of container
-				List<Element> NewListMaxValues = getElements(NewConstr,
-						"hasMinValue");
-				Element NewMaxValue = NewListMaxValues.get(0);
-				String MaxValueStr = NewMaxValue.getTextContent();
-				MemoryConstValues.add(MaxValueStr);
-			}
-		}
-		return 0;
-	}
-	
-	private List<Double> getMaxResponseTimes() {
-		ArrayList<Double> responseTimes = new ArrayList<Double>();
-		
-		// check that document was loaded
-		if (!loadrez)
-			return responseTimes;
-
-		// receiving list of constraints
-		List<Element> newConstrList = getElements(root, "constraint");
-		for (int i = 0; i < newConstrList.size(); i++) {
-			// for every container receiving its metric
-			Element newConstr = newConstrList.get(i);
-			List<Element> newListMetric = getElements(newConstr, "metric");
-			Element newMetric = newListMetric.get(0);
-			String metric = newMetric.getTextContent();
-			// if metric = RAM then it is memory constraint
-			if (metric.equalsIgnoreCase("ResponseTime")) {
-			
-				
-				// receiving response time constraints
-				List<Element>  newListMaxValues = getElements(newConstr, "hasMaxValue");
-				Element newMaxValue = newListMaxValues.get(0);
-				double value = 0.0;
-				try {
-					value = (double)Integer.parseInt(newMaxValue.getTextContent()) * 0.001; //get the value in milliseconds and save it in seconds
-				} catch (Exception e) {
-					e.printStackTrace();
-					value = 0.0;
-				}			
-				
-				responseTimes.add(value);
-			}
-		}
-		
-		return responseTimes;
-	}
-	
-	private List<Double> getMinAvailabilities() {
-		ArrayList<Double> availabilities = new ArrayList<Double>();
-		
-		// check that document was loaded
-		if (!loadrez)
-			return availabilities;
-
-		// receiving list of constraints
-		List<Element> newConstrList = getElements(root, "constraint");
-		for (int i = 0; i < newConstrList.size(); i++) {
-			// for every container receiving its metric
-			Element newConstr = newConstrList.get(i);
-			List<Element> newListMetric = getElements(newConstr, "metric");
-			Element newMetric = newListMetric.get(0);
-			String metric = newMetric.getTextContent();
-			// if metric = Availability then that's a constraint on the availability
-			if (metric.equalsIgnoreCase("Availability")) {
-			
-				
-				// receiving availability constraints
-				List<Element>  newListMinValues = getElements(newConstr, "hasMinValue");
-				Element newMinValue = newListMinValues.get(0);
-				double value = 0.0;
-				try {
-					value = (double)Integer.parseInt(newMinValue.getTextContent()) * 0.01; //get the value in % and save it as a double from 0 to 1
-				} catch (Exception e) {
-					e.printStackTrace();
-					value = 0.0;
-				}			
-				
-				availabilities.add(value);
-			}
-		}
-		
-		return availabilities;
 	}
 	
 	public double getAvgMinAvailability() {
-		List<Double> availabilities = getMinAvailabilities();
-		
-		if (availabilities.size() == 0)
+		if (availabilitiesConstraints.size() == 0)
 			return 0.01;
 		
 		double sum = 0.0;
 		
-		for (double d : availabilities)
+		for (double d : availabilitiesConstraints.values())
 			sum += d;
 		
-		return sum/availabilities.size();
+		return sum/availabilitiesConstraints.size();
 	}
 	
 	public double getAvgMaxResponseTime() {
-		List<Double> responseTimes = getMaxResponseTimes();
-		
-		if (responseTimes.size() == 0)
+		if (responseTimesConstraints.size() == 0)
 			return 0.0;
 		
 		double sum = 0.0;
 		
-		for (double d : responseTimes)
+		for (double d : responseTimesConstraints.values())
 			sum += d;
 		
-		return sum/responseTimes.size();
+		return sum/responseTimesConstraints.size();
+	}
+	
+	public double getAvgWorkloadPercentage() {
+		if (workloadPercentagesConstraints.size() == 0)
+			return 0.0;
+		
+		double sum = 0.0;
+		
+		for (double d : workloadPercentagesConstraints.values())
+			sum += d;
+		
+		return sum/workloadPercentagesConstraints.size();
 	}
 	
 }

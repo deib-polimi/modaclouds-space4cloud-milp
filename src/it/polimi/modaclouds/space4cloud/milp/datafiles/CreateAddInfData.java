@@ -133,45 +133,6 @@ public class CreateAddInfData {
 			e.printStackTrace();
 		}
 	}
-
-	// generates new data in newAddInfList
-	// List<String> ProviderNames is used to set minimum arrival rate values in
-	// form (ProviderName-value)
-	// TimeIntervals - amount of time intervals
-	// ProvidersCount - amount of providers
-	// AmplitudeAR - max value (without noise) of arrival rate
-	// AmplitudeMAR - max value of minimum arrival rate per provider
-	// MinProvVal - minimum amount of providers
-	// MSRT - maximum system response time
-	public void generateData(List<String> ProviderNames, int ProvidersCount,
-			double AmplitudeAR, double AmplitudeMAR, int MinProvVal, double MSRT) {
-		
-		newAddInfList = new AddInfList();
-		newAddInfList.setTimeIntervalsCount(24);
-		newAddInfList.setProvidersCount(ProvidersCount);
-		Random randomGenerator = new Random();
-
-		// sets daily proportions of arrivals
-		double[] arrate = new double[] { 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.38,
-				0.6, 0.8, 0.7, 0.7, 0.9, 1, 0.8, 0.58, 0.4, 0.25, 0.15, 0.1,
-				0.1, 0.1, 0.1, 0.1, 0.1 };
-		for (int i = 0; i < 24; i++) {
-			// generates arrival rate with noise. Noise increases with
-			// increasing of daily proportion of arrivals
-			newAddInfList.arrivalrate[i] = arrate[i]
-					* (0.5 + randomGenerator.nextDouble()) * AmplitudeAR;
-			newAddInfList.TimeIndex[i] = i + 1;
-			newAddInfList.thinkTimes[i] = 10.0;
-		}
-		for (int i = 0; i < ProvidersCount; i++) {
-			// generates minimum arrival rate per provider
-			newAddInfList.MinArrRate[i] = randomGenerator.nextDouble()
-					* AmplitudeMAR;
-			newAddInfList.ProviderNames[i] = ProviderNames.get(i);
-		}
-		newAddInfList.MinProv = MinProvVal;
-		newAddInfList.MaxSystemResponseTime = MSRT;
-	}
 	
 	public AddInfList getAddInfList() {
 		return newAddInfList;

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 //contains main options of the program
@@ -156,6 +157,43 @@ public class Configuration {
 		RUN_RES = prop.getProperty("RUN_RES", RUN_RES);
 		
 		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
+	}
+	
+	/**
+	 * Checks if the configuration is valid returning a list of errors
+	 * @return
+	 */
+	public static List<String> checkValidity() {
+		ArrayList<String> errors = new ArrayList<String>();
+
+		//check Palladio Model Files
+		if(PALLADIO_REPOSITORY_MODEL == null || PALLADIO_REPOSITORY_MODEL.isEmpty())
+			errors.add("The palladio repository model has not been specified");
+		if(PALLADIO_SYSTEM_MODEL== null|| PALLADIO_SYSTEM_MODEL.isEmpty())
+			errors.add("The palladio system model has not been specified");
+		if(PALLADIO_RESOURCE_MODEL== null|| PALLADIO_RESOURCE_MODEL.isEmpty())
+			errors.add("The palladio resource environment model has not been specified");
+		if(PALLADIO_ALLOCATION_MODEL== null|| PALLADIO_ALLOCATION_MODEL.isEmpty())
+			errors.add("The palladio allocation model has not been specified");
+		if(PALLADIO_USAGE_MODEL== null|| PALLADIO_USAGE_MODEL.isEmpty())
+			errors.add("The palladio usage model has not been specified");
+		//check extensions
+		if(USAGE_MODEL_EXTENSION==null|| USAGE_MODEL_EXTENSION.isEmpty())
+			errors.add("The usage model extension has not been specified");
+		if(CONSTRAINTS==null|| CONSTRAINTS.isEmpty())
+			errors.add("The constraint file has not been specified");
+		//check functionality and the solver
+		if(DB_CONNECTION_FILE==null|| DB_CONNECTION_FILE.isEmpty())
+			errors.add("The database connection file has not been specified");
+
+		if(SSH_USER_NAME==null|| SSH_USER_NAME.isEmpty())
+			errors.add("The user name for SSH connection has to be provided to perform the initial solution generation");
+		if(SSH_PASSWORD==null|| SSH_PASSWORD.isEmpty())
+			errors.add("The password for SSH connection has to be provided to perform the initial solution generation");
+		if(SSH_HOST==null|| SSH_HOST.isEmpty())
+			errors.add("The host for SSH connection has to be provided to perform the initial solution generation");
+
+		return errors;
 	}
 }
 

@@ -22,6 +22,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,7 +50,17 @@ public class Solver {
 		}
 	}
 	
-	public void compute() {
+	public void compute() throws MILPException {
+		List<String> errors = Configuration.checkValidity(); 
+		if (errors.size() == 1)
+			throw new MILPException("There is 1 problem with the configuration:\n- " + errors.get(0)); 
+		else if (errors.size() > 1) {
+			String message = "There are " + errors.size() + " problems with the configuration:";
+			for (String s : errors)
+				message += "\n- " + s;
+			throw new MILPException(message);
+		}
+		
 		new DataProcessing();
 		
 		if (removeTempFiles)
@@ -73,7 +84,12 @@ public class Solver {
 	
 	public File getResourceModelExt() {
 		if (resourceModelExt == null)
-			compute();
+			try {
+				compute();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		
 		if (resourceModelExt.exists())
 			return resourceModelExt;
@@ -84,7 +100,12 @@ public class Solver {
 	
 	public File getSolution() {
 		if (solution == null)
-			compute();
+			try {
+				compute();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		
 		if (solution.exists())
 			return solution;
@@ -95,7 +116,12 @@ public class Solver {
 	
 	public File getMultiCloudExt() {
 		if (multiCloudExt == null)
-			compute();
+			try {
+				compute();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		
 		if (multiCloudExt.exists())
 			return multiCloudExt;
