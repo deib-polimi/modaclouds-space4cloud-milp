@@ -19,6 +19,7 @@ package it.polimi.modaclouds.space4cloud.milp;
 import it.polimi.modaclouds.space4cloud.milp.processing.DataProcessing;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -59,6 +60,16 @@ public class Solver {
 			for (String s : errors)
 				message += "\n- " + s;
 			throw new MILPException(message);
+		}
+		
+		try {
+			Files.createDirectories(Paths.get(
+					Configuration.PROJECT_BASE_FOLDER,
+					Configuration.WORKING_DIRECTORY));
+		} catch (IOException e) {
+			throw new MILPException("Error with dealing with the output folder: " + Paths.get(
+					Configuration.PROJECT_BASE_FOLDER,
+					Configuration.WORKING_DIRECTORY).toString());
 		}
 		
 		new DataProcessing();

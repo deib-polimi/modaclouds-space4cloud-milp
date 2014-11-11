@@ -56,23 +56,29 @@ public class ConstraintXML {
 			
 			for (Constraint cons : loadedConstraints.getConstraints()) {
 				
-				String metric = cons.getMetric();
+				Metric metric = Metric.getMetricFromTag(cons.getMetric());
 				String target = cons.getTargetResourceIDRef();
 				Float minValue = cons.getRange().getHasMinValue();
 				Float maxValue = cons.getRange().getHasMaxValue();
+				String aggregation = "";
+				if (cons.getMetricAggregation() != null)
+					aggregation = cons.getMetricAggregation().getAggregateFunction();
 				
 				switch (metric) {
-				case "RAM":
+				case RAM:
 					memoryConstraints.put(target, minValue);
 					break;
-				case "ResponseTime":
-					responseTimesConstraints.put(target, new Float(maxValue * 0.001)); // saved in seconds where expressed in ms
+				case RESPONSETIME:
+					if (aggregation.equals("Average"))
+						responseTimesConstraints.put(target, new Float(maxValue * 0.001)); // saved in seconds where expressed in ms
 					break;
-				case "Availability":
+				case AVAILABILITY:
 					availabilitiesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
 					break;
-				case "WorkloadPercentage":
+				case WORKLOADPERCENTAGE:
 					workloadPercentagesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+					break;
+				default:
 					break;
 				}
 			}
@@ -129,6 +135,66 @@ public class ConstraintXML {
 			sum += d;
 		
 		return sum/workloadPercentagesConstraints.size();
+	}
+	
+	public enum Metric {
+		REPLICATION("Replication"), RAM("RAM"), HDD("HardDisk"), CORES("Cores"), CPU(
+				"CPUUtilization"), MACHINETYPE("MachineType"), SERVICETYPE(
+				"ServiceType"), RESPONSETIME("ResponseTime"), AVAILABILITY(
+				"Availability"), RELIABILITY("Reliability"), WORKLOADPERCENTAGE("WorkloadPercentage");
+
+		public static Metric getMetricFromTag(String tag) {
+			switch (tag) {
+			case "Replication":
+				return REPLICATION;
+			case "RAM":
+				return RAM;
+			//TODO:not supported
+			case"HardDisk":
+				return HDD;
+			//TODO:not supported
+			case "Cores":
+				return CORES;
+			case "CPUUtilization":
+				return CPU;
+			//TODO:not supported
+			case "MachineType":
+				return MACHINETYPE;
+			//TODO:not supported
+			case "ServiceType":
+				return SERVICETYPE;
+			case "ResponseTime":
+				return RESPONSETIME;
+			//TODO:not supported
+			case "Availability":
+				return AVAILABILITY;
+			//TODO:not supported
+			case "Reliability":
+				return RELIABILITY;
+			case "WorkloadPercentage":
+				return WORKLOADPERCENTAGE;
+			default:
+				return null;
+			}
+		}
+
+		private String xmlTag; // the tag of the type attribute in the xml file
+
+		private Metric(String xmlTag) {
+			this.xmlTag = xmlTag;
+		}
+
+		public String getXmlTag() {
+			return xmlTag;
+		}
+		
+		public static String getSupportedMetricNames() {
+			String value="";
+			for (Metric m : Metric.values()) {
+				value 	+= m.getXmlTag()+" ";
+			}
+			return value;
+		}
 	}
 	
 }
