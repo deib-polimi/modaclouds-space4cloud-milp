@@ -154,7 +154,7 @@ public class CreateAddInfData {
 		newAddInfList.setTimeIntervalsCount(24);
 		newAddInfList.setProvidersCount(ProvidersCount);
 		Random randomGenerator = new Random();
-		
+		ConstraintXML constraints = null;
 		UsageModelExtensions umes = null;
 		try {
 			umes = XMLHelper.deserialize(new File(usageModelExtFile).toURI().toURL(),
@@ -165,7 +165,7 @@ public class CreateAddInfData {
 		}
 		
 		if (constraintFile != null && constraintFile.length() > 0) {
-			ConstraintXML constraints = new ConstraintXML(constraintFile);
+			constraints = new ConstraintXML(constraintFile);
 			newAddInfList.MaxSystemResponseTime = constraints.getAvgMaxResponseTime();
 		} else {
 			newAddInfList.MaxSystemResponseTime = 0.4;
@@ -202,6 +202,8 @@ public class CreateAddInfData {
 			// generates minimum arrival rate per provider
 			newAddInfList.MinArrRate[i] = randomGenerator.nextDouble()
 					* AmplitudeMAR;
+			if(constraints != null)
+				newAddInfList.MinArrRate[i] = constraints.getAvgWorkloadPercentage();
 			newAddInfList.ProviderNames[i] = ProviderNames.get(i);
 		}
 		newAddInfList.MinProv = MinProvVal;

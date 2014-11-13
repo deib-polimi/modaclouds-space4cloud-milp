@@ -19,9 +19,11 @@ package it.polimi.modaclouds.space4cloud.milp.xmlfiles;
 import it.polimi.modaclouds.qos_models.schema.Constraint;
 import it.polimi.modaclouds.qos_models.schema.Constraints;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
+import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
+import java.util.Random;
 
 //this class reads model constraint file
 public class ConstraintXML {
@@ -127,7 +129,7 @@ public class ConstraintXML {
 	
 	public double getAvgWorkloadPercentage() {
 		if (workloadPercentagesConstraints.size() == 0)
-			return 0.0;
+			return new Random().nextDouble()*Configuration.MMAR;
 		
 		double sum = 0.0;
 		
