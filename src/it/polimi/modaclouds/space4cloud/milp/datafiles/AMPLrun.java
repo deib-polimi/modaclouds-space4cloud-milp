@@ -52,7 +52,9 @@ public class AMPLrun {
 					Configuration.RUN_WORKING_DIRECTORY,
 					FilePathStartingSolution != null ? Configuration.RUN_MODEL_STARTING_SOLUTION : Configuration.RUN_MODEL_STANDARD,
 					Configuration.RUN_DATA,
-					Configuration.RUN_SOLVER
+					Configuration.RUN_SOLVER,
+					Configuration.RUN_LOG,
+					Configuration.RUN_RES
 					);
 			
 			out.flush();

@@ -18,6 +18,7 @@ package it.polimi.modaclouds.space4cloud.milp.processing;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
 import it.polimi.modaclouds.space4cloud.milp.datafiles.AMPLrun;
+import it.polimi.modaclouds.space4cloud.milp.datafiles.Bash;
 import it.polimi.modaclouds.space4cloud.milp.datafiles.Model;
 import it.polimi.modaclouds.space4cloud.milp.ssh.SshConnector;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ResultXML;
@@ -63,6 +64,8 @@ public class DataProcessing {
 				Configuration.SolverTimeLimit, Configuration.RUN_WORKING_DIRECTORY, Configuration.FilePathStartingSolution);
 
 		Model.print();
+		
+		Bash.print();
 		
 		// constructor for SSH connector
 		// creates connection to AMPL server

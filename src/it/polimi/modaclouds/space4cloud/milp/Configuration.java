@@ -42,6 +42,7 @@ public class Configuration {
 	public static String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
 	public static String RUN_DATA = "data.dat"; //sets where temp AMPL file data.dat will be saved 
 	public static String RUN_SOLVER = "/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp";
+	public static String RUN_AMPL_FOLDER = "/usr/optimization/ILOG/ampl20060626.cplex101";
 	public static String RUN_LOG = "log.tmp";//sets where temp AMPL file log.tmp will be saved 
 	public static String RUN_RES = "shortrez.out";//sets where temp AMPL file shortrez.out will be saved
 	public static String DEFAULTS_BASH = "bash.run";
@@ -121,6 +122,7 @@ public class Configuration {
 		prop.put("RUN_MODEL_STARTING_SOLUTION", RUN_MODEL_STARTING_SOLUTION);
 		prop.put("RUN_DATA", RUN_DATA);
 		prop.put("RUN_SOLVER", RUN_SOLVER);
+		prop.put("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
 		prop.put("RUN_FILE", RUN_FILE);
 		prop.put("RUN_LOG", RUN_LOG);
 		prop.put("RUN_RES", RUN_RES);
@@ -155,6 +157,7 @@ public class Configuration {
 		RUN_MODEL_STARTING_SOLUTION = prop.getProperty("RUN_MODEL_STARTING_SOLUTION", RUN_MODEL_STARTING_SOLUTION);
 		RUN_DATA = prop.getProperty("RUN_DATA", RUN_DATA);
 		RUN_SOLVER = prop.getProperty("RUN_SOLVER", RUN_SOLVER);
+		RUN_AMPL_FOLDER = prop.getProperty("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
 		RUN_FILE = prop.getProperty("RUN_FILE", RUN_FILE);
 		RUN_LOG = prop.getProperty("RUN_LOG", RUN_LOG);
 		RUN_RES = prop.getProperty("RUN_RES", RUN_RES);

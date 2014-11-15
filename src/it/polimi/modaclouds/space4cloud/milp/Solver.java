@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Solver {
@@ -49,6 +51,28 @@ public class Solver {
 		}
 	}
 	
+	private static String date = null;
+	
+	public static String getDate() {
+		if (date != null)
+			return date;
+		
+		Calendar c = Calendar.getInstance();
+		
+		DecimalFormat f = new DecimalFormat("00");
+		
+		date = String.format("%d%s%s-%s%s%s",
+				c.get(Calendar.YEAR),
+				f.format(c.get(Calendar.MONTH) + 1),
+				f.format(c.get(Calendar.DAY_OF_MONTH)),
+				f.format(c.get(Calendar.HOUR_OF_DAY)),
+				f.format(c.get(Calendar.MINUTE)),
+				f.format(c.get(Calendar.SECOND))
+				);
+		
+		return date;
+	}
+	
 	public void compute() throws MILPException {
 		List<String> errors = Configuration.checkValidity(); 
 		if (errors.size() == 1)
@@ -69,6 +93,8 @@ public class Solver {
 					Configuration.PROJECT_BASE_FOLDER,
 					Configuration.WORKING_DIRECTORY).toString());
 		}
+		
+		Configuration.RUN_WORKING_DIRECTORY += "/" + getDate();
 		
 		new DataProcessing();
 		
