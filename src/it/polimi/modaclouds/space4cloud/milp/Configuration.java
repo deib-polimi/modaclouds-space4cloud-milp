@@ -36,7 +36,8 @@ public class Configuration {
 	public static String PALLADIO_SYSTEM_MODEL;		//Path to System Diagram
 	
 	// Information used in the AMPL.run file
-	public static String RUN_WORKING_DIRECTORY = "/home/s4c/new64"; //upload directory on AMPL server
+	public static String DEFAULTS_WORKING_DIRECTORY = "/home/s4c/new64"; //upload directory on AMPL server
+	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
 	public static String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
 	public static String RUN_MODEL_STANDARD = "model.mod";
 	public static String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
