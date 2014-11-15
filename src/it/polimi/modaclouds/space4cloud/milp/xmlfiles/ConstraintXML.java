@@ -42,52 +42,53 @@ public class ConstraintXML {
 	// constructors
 	public ConstraintXML(String FPConstr) {
 		FilePathConstraint = FPConstr;
-		
+
 		extractConstraints();
 	}
-	
+
 	private Constraints loadedConstraints;
 
 	// loads XML document in DOM parser
 	public boolean extractConstraints() {
 		if (loadrez)
 			return true;
-		
+
 		try {
 			loadedConstraints = XMLHelper.deserialize(Paths.get(FilePathConstraint).toUri().toURL(),Constraints.class);
-			
+
 			for (Constraint cons : loadedConstraints.getConstraints()) {
-				
+
 				Metric metric = Metric.getMetricFromTag(cons.getMetric());
-				String target = cons.getTargetResourceIDRef();
+				String target = cons.getTargetResourceIDRef().trim();
 				Float minValue = cons.getRange().getHasMinValue();
 				Float maxValue = cons.getRange().getHasMaxValue();
 				String aggregation = "";
 				if (cons.getMetricAggregation() != null)
-					aggregation = cons.getMetricAggregation().getAggregateFunction();
-				
-				switch (metric) {
-				case RAM:
-					memoryConstraints.put(target, minValue);
-					break;
-				case RESPONSETIME:
-					if (aggregation.equals("Average"))
-						responseTimesConstraints.put(target, new Float(maxValue * 0.001)); // saved in seconds where expressed in ms
-					break;
-				case AVAILABILITY:
-					availabilitiesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
-					break;
-				case WORKLOADPERCENTAGE:
-					workloadPercentagesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
-					break;
-				default:
-					break;
+					aggregation = cons.getMetricAggregation().getAggregateFunction().trim();
+				if(metric != null){
+					switch (metric) {
+					case RAM:
+						memoryConstraints.put(target, minValue);
+						break;
+					case RESPONSETIME:
+						if (aggregation.equals("Average"))
+							responseTimesConstraints.put(target, new Float(maxValue * 0.001)); // saved in seconds where expressed in ms
+						break;
+					case AVAILABILITY:
+						availabilitiesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+						break;
+					case WORKLOADPERCENTAGE:
+						workloadPercentagesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+						break;
+					default:
+						break;
+					}
 				}
 			}
-			
+
 			loadrez = true;
 		} catch (Exception e) {
-//			e.getMessage();
+			//			e.getMessage();
 			e.printStackTrace();
 			loadrez = false;
 		}
@@ -102,48 +103,48 @@ public class ConstraintXML {
 		else
 			return res;
 	}
-	
+
 	public double getAvgMinAvailability() {
 		if (availabilitiesConstraints.size() == 0)
 			return 0.01;
-		
+
 		double sum = 0.0;
-		
+
 		for (double d : availabilitiesConstraints.values())
 			sum += d;
-		
+
 		return sum/availabilitiesConstraints.size();
 	}
-	
+
 	public double getAvgMaxResponseTime() {
 		if (responseTimesConstraints.size() == 0)
 			return 0.0;
-		
+
 		double sum = 0.0;
-		
+
 		for (double d : responseTimesConstraints.values())
 			sum += d;
-		
+
 		return sum/responseTimesConstraints.size();
 	}
-	
+
 	public double getAvgWorkloadPercentage() {
 		if (workloadPercentagesConstraints.size() == 0)
 			return new Random().nextDouble()*Configuration.MMAR;
-		
+
 		double sum = 0.0;
-		
+
 		for (double d : workloadPercentagesConstraints.values())
 			sum += d;
-		
+
 		return sum/workloadPercentagesConstraints.size();
 	}
-	
+
 	public enum Metric {
 		REPLICATION("Replication"), RAM("RAM"), HDD("HardDisk"), CORES("Cores"), CPU(
 				"CPUUtilization"), MACHINETYPE("MachineType"), SERVICETYPE(
-				"ServiceType"), RESPONSETIME("ResponseTime"), AVAILABILITY(
-				"Availability"), RELIABILITY("Reliability"), WORKLOADPERCENTAGE("WorkloadPercentage");
+						"ServiceType"), RESPONSETIME("ResponseTime"), AVAILABILITY(
+								"Availability"), RELIABILITY("Reliability"), WORKLOADPERCENTAGE("WorkloadPercentage");
 
 		public static Metric getMetricFromTag(String tag) {
 			switch (tag) {
@@ -151,26 +152,26 @@ public class ConstraintXML {
 				return REPLICATION;
 			case "RAM":
 				return RAM;
-			//TODO:not supported
+				//TODO:not supported
 			case"HardDisk":
 				return HDD;
-			//TODO:not supported
+				//TODO:not supported
 			case "Cores":
 				return CORES;
 			case "CPUUtilization":
 				return CPU;
-			//TODO:not supported
+				//TODO:not supported
 			case "MachineType":
 				return MACHINETYPE;
-			//TODO:not supported
+				//TODO:not supported
 			case "ServiceType":
 				return SERVICETYPE;
 			case "ResponseTime":
 				return RESPONSETIME;
-			//TODO:not supported
+				//TODO:not supported
 			case "Availability":
 				return AVAILABILITY;
-			//TODO:not supported
+				//TODO:not supported
 			case "Reliability":
 				return RELIABILITY;
 			case "WorkloadPercentage":
@@ -189,7 +190,7 @@ public class ConstraintXML {
 		public String getXmlTag() {
 			return xmlTag;
 		}
-		
+
 		public static String getSupportedMetricNames() {
 			String value="";
 			for (Metric m : Metric.values()) {
@@ -198,5 +199,5 @@ public class ConstraintXML {
 			return value;
 		}
 	}
-	
+
 }
