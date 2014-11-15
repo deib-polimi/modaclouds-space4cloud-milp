@@ -56,6 +56,7 @@ public class Configuration {
 	
 	public static String CONSTRAINTS;
 	public static String USAGE_MODEL_EXTENSION;
+	public static String RESOURCE_ENVIRONMENT_EXTENSION;
 	
 	public static String PROJECT_BASE_FOLDER;
 	public static String WORKING_DIRECTORY = "space4cloud";
@@ -105,6 +106,7 @@ public class Configuration {
 		prop.put("PALLADIO_USAGE_MODEL", PALLADIO_USAGE_MODEL);
 		prop.put("PALLADIO_RESOURCE_MODEL", PALLADIO_RESOURCE_MODEL);
 		prop.put("USAGE_MODEL_EXTENSION", USAGE_MODEL_EXTENSION);
+		prop.put("RESOURCE_ENVIRONMENT_EXTENSION", RESOURCE_ENVIRONMENT_EXTENSION);
 		prop.put("CONSTRAINTS", CONSTRAINTS);
 		prop.put("PROJECT_BASE_FOLDER", PROJECT_BASE_FOLDER);
 		prop.put("WORKING_DIRECTORY", WORKING_DIRECTORY);
@@ -139,6 +141,7 @@ public class Configuration {
 		PALLADIO_USAGE_MODEL = prop.getProperty("PALLADIO_USAGE_MODEL", PALLADIO_USAGE_MODEL);
 		PALLADIO_RESOURCE_MODEL = prop.getProperty("PALLADIO_RESOURCE_MODEL", PALLADIO_RESOURCE_MODEL);
 		USAGE_MODEL_EXTENSION = prop.getProperty("USAGE_MODEL_EXTENSION", USAGE_MODEL_EXTENSION);
+		RESOURCE_ENVIRONMENT_EXTENSION = prop.getProperty("RESOURCE_ENVIRONMENT_EXTENSION", RESOURCE_ENVIRONMENT_EXTENSION);
 		CONSTRAINTS = prop.getProperty("CONSTRAINTS", CONSTRAINTS);
 		PROJECT_BASE_FOLDER = prop.getProperty("PROJECT_BASE_FOLDER", PROJECT_BASE_FOLDER);
 		WORKING_DIRECTORY = prop.getProperty("WORKING_DIRECTORY", WORKING_DIRECTORY);
@@ -167,23 +170,25 @@ public class Configuration {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		//check Palladio Model Files
-		if(PALLADIO_REPOSITORY_MODEL == null || PALLADIO_REPOSITORY_MODEL.isEmpty())
+		if(fileNotSpecifiedORNotExist(PALLADIO_REPOSITORY_MODEL))
 			errors.add("The palladio repository model has not been specified");
-		if(PALLADIO_SYSTEM_MODEL== null|| PALLADIO_SYSTEM_MODEL.isEmpty())
+		if(fileNotSpecifiedORNotExist(PALLADIO_SYSTEM_MODEL))
 			errors.add("The palladio system model has not been specified");
-		if(PALLADIO_RESOURCE_MODEL== null|| PALLADIO_RESOURCE_MODEL.isEmpty())
+		if(fileNotSpecifiedORNotExist(PALLADIO_RESOURCE_MODEL))
 			errors.add("The palladio resource environment model has not been specified");
-		if(PALLADIO_ALLOCATION_MODEL== null|| PALLADIO_ALLOCATION_MODEL.isEmpty())
+		if(fileNotSpecifiedORNotExist(PALLADIO_ALLOCATION_MODEL))
 			errors.add("The palladio allocation model has not been specified");
-		if(PALLADIO_USAGE_MODEL== null|| PALLADIO_USAGE_MODEL.isEmpty())
+		if(fileNotSpecifiedORNotExist(PALLADIO_USAGE_MODEL))
 			errors.add("The palladio usage model has not been specified");
 		//check extensions
-		if(USAGE_MODEL_EXTENSION==null|| USAGE_MODEL_EXTENSION.isEmpty())
+		if(fileNotSpecifiedORNotExist(USAGE_MODEL_EXTENSION))
 			errors.add("The usage model extension has not been specified");
-		if(CONSTRAINTS==null|| CONSTRAINTS.isEmpty())
+		if(fileNotSpecifiedORNotExist(RESOURCE_ENVIRONMENT_EXTENSION))
+			errors.add("The resource environment extension has not been specified");
+		if(fileNotSpecifiedORNotExist(CONSTRAINTS))
 			errors.add("The constraint file has not been specified");
 		//check functionality and the solver
-		if(DB_CONNECTION_FILE==null|| DB_CONNECTION_FILE.isEmpty())
+		if(fileNotSpecifiedORNotExist(DB_CONNECTION_FILE))
 			errors.add("The database connection file has not been specified");
 
 		if(SSH_USER_NAME==null|| SSH_USER_NAME.isEmpty())
@@ -194,6 +199,10 @@ public class Configuration {
 			errors.add("The host for SSH connection has to be provided to perform the initial solution generation");
 
 		return errors;
+	}
+	
+	private static boolean fileNotSpecifiedORNotExist(String filePath){
+		return filePath == null || filePath.isEmpty() || !Paths.get(filePath).toFile().exists();
 	}
 }
 

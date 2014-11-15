@@ -23,6 +23,7 @@ import it.polimi.modaclouds.space4cloud.milp.xmldatalists.AddInfList;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsAllocation;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsRepository;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsResEnv;
+import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsResEnvExt;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSolution;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSystem;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsUsage;
@@ -53,6 +54,8 @@ public class Parser {
 	public ParsSystem newparssystem = null;
 	
 	public ParsSolution newparssolution = null;
+	
+	public ParsResEnvExt newparsresenvext = null;
 
 //	// parser for AdditionalInformation file
 //	public ParsAddInf newaddinf = null;
@@ -117,6 +120,7 @@ public class Parser {
 		
 		newparssolution = new ParsSolution(Configuration.FilePathStartingSolution, newparssql.resMatrix, newparsrepository.resRepositoryList);
 		
+		newparsresenvext = new ParsResEnvExt(Configuration.RESOURCE_ENVIRONMENT_EXTENSION, newparssql.resMatrix, newparsrepository.resRepositoryList);
 		
 		////////////////////
 		

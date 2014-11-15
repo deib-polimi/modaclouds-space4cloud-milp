@@ -17,6 +17,7 @@
 package it.polimi.modaclouds.space4cloud.milp.xmlfiles;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -131,6 +132,38 @@ public class ParsSolution {
 			solution = null;
 		}
 		
+	}
+	
+	public static ArrayList<String> getProviders(File f) {
+		ArrayList<String> res = new ArrayList<String>();
+		
+		if (f != null && f.exists()) {
+			
+			try {
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(f);
+				doc.getDocumentElement().normalize();
+				
+				{
+					NodeList solutions = doc.getElementsByTagName("Solution");
+					
+					for (int i = 0; i < solutions.getLength(); ++i) {
+						Node n = solutions.item(i);
+						NodeList tiers = ((Element)n).getElementsByTagName("Tier");
+						
+						Element tier = (Element) tiers.item(0);
+						String provider = tier.getAttribute("providerName");
+						
+						res.add(provider);
+					}
+				}
+			} catch (Exception e) {
+				res = new ArrayList<String>();
+			}
+		}
+		
+		return res;
 	}
 	
 }

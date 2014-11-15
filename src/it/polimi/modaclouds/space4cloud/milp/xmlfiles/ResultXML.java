@@ -21,6 +21,8 @@ import it.polimi.modaclouds.qos_models.schema.Location;
 import it.polimi.modaclouds.qos_models.schema.MultiCloudExtension;
 import it.polimi.modaclouds.qos_models.schema.MultiCloudExtensions;
 import it.polimi.modaclouds.qos_models.schema.Provider;
+import it.polimi.modaclouds.qos_models.schema.Replica;
+import it.polimi.modaclouds.qos_models.schema.ReplicaElement;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
 import it.polimi.modaclouds.qos_models.schema.WorkloadPartition;
@@ -229,45 +231,6 @@ public class ResultXML {
 				CDBList.countTimeIntervals, CRList.ContainerList.ncount);
 		// parsing AMPL results, saving them in new XML document and in the
 		// container wrapperextension
-		
-//		{
-//			ExtensionXML extcheap = new ExtensionXML(0,
-//					CDBList.countTimeIntervals, CRList.ContainerList.ncount);
-//			extcheap.TypeOfResult = "cheap";
-//			extcheap.SaveDirectory = SaveDirectory;
-//			double U = CRList.U;
-//			int p = CRList.finalcheapprov;
-//
-//			extcheap.ProviderName = CDBList.ProviderName[p];
-//			extcheap.ShouldBePrinted = true;
-//
-//			for (int t = 0; t < CDBList.countTimeIntervals; t++) {
-//				double Population = CDBList.arrivalrate[t]
-//						* (10 + CRList.MaxSystemResponseTime);
-//				extcheap.population[t] = (int) Math.round(Population);
-//				extcheap.ThinkTime[t] = 10;
-//			}
-//
-//			for (int i = 0; i < CRList.ContainerList.ncount; i++) {
-//				int v = CRList.cheaptype[p][i];
-//				extcheap.ContainerId[i] = CRList.ContainerList.Id[i];
-//				extcheap.ServiceName[i] = newMatrix.ServiceName[p][v];
-//				extcheap.ServiceType[i] = "Compute";
-//				extcheap.VMtypeName[i] = newMatrix.TypeName[p][v];
-//				
-//				extcheap.Region[i] = newMatrix.Region[p][v];
-//
-//				for (int t = 0; t < CDBList.countTimeIntervals; t++) {
-//					double a = CDBList.arrivalrate[t]
-//							* CRList.DemandperContainer[i]
-//							/ (U * newMatrix.Speed[p][v]);
-//					extcheap.replicas[i][t] = Integer.toString((int) Math
-//							.round(a) + 1);
-//				}
-//			}
-//
-//			extcheap.createExtensions();
-//		}
 
 		try {
 			BufferedReader in_buf = new BufferedReader(new FileReader(
@@ -327,6 +290,20 @@ public class ResultXML {
 		
 		/////////////////////////////////////////////
 		
+		writeMultiCloudExtension(newWExtension);
+		
+		/////////////////////////////////////////////
+
+		writeResourceModelExtension(newWExtension);
+		
+		/////////////////////////////////////////////
+		
+		writeSolution(newWExtension, cost, time);
+
+		return 0;
+	}
+	
+	private void writeMultiCloudExtension(WrapperExtension newWExtension) {
 		MultiCloudExtensions mces = new MultiCloudExtensions();
 		
 		MultiCloudExtension mce = new MultiCloudExtension();
@@ -358,9 +335,42 @@ public class ResultXML {
 		}
 		
 		writeFile(mces);
-		
-		/////////////////////////////////////////////
+	}
 
+//	private void writeResourceModelExtensionOld(WrapperExtension newWExtension) {
+//		ResourceModelExtension rme = new ResourceModelExtension();
+//		
+//		for (int w = 0; w < newWExtension.ExtensionsArray.length; ++w) {
+//			ExtensionXML x = newWExtension.ExtensionsArray[w];
+//
+//			for (int i = 0; i < x.ContainerId.length; ++i) {
+//				if (x.ContainerId[i] == null)
+//					continue;
+//
+//				ResourceContainer rc = new ResourceContainer();
+//				rc.setProvider(x.ProviderName);
+//				rc.setId(x.ContainerId[i]);
+//
+//				IaasService is = new IaasService();
+//				is.setServiceName(x.ServiceName[i]);
+//				is.setServiceType(x.ServiceType[i]);
+//				
+//				String region = x.Region[i]; 
+//				if (region != null && region.length() > 0) {
+//					Location l = new Location();
+//					l.setRegion(x.Region[i]);
+//					is.setLocation(l);
+//				}
+//
+//				rc.setCloudResource(is);
+//				rme.getResourceContainer().add(rc);
+//			}
+//		}
+//
+//		writeFile(rme);
+//	}
+	
+	private void writeResourceModelExtension(WrapperExtension newWExtension) {
 		ResourceModelExtension rme = new ResourceModelExtension();
 		
 		for (int w = 0; w < newWExtension.ExtensionsArray.length; ++w) {
@@ -385,24 +395,37 @@ public class ResultXML {
 					is.setLocation(l);
 				}
 
+				is.setResourceSizeID(x.VMtypeName[i]);
+				
+				Replica replicas = new Replica();
+				
+				for (int j = 0; j < 24; ++j) {
+					ReplicaElement re = new ReplicaElement();
+					re.setHour(j);
+					re.setValue(Integer.parseInt(x.replicas[i][j]));
+					replicas.getReplicaElement().add(re);
+				}
+				
+				is.setReplicas(replicas);
+				
 				rc.setCloudResource(is);
 				rme.getResourceContainer().add(rc);
 			}
 		}
 
 		writeFile(rme);
-		
-		/////////////////////////////////////////////
-		
+	}
+
+	private void writeSolution(WrapperExtension newWExtension, double cost, long time) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
+	
 			// root elements
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("SolutionMultiResult");
 			doc.appendChild(rootElement);
-
+	
 			// set cost
 			rootElement.setAttribute("cost","" + cost); // 0);
 			//set evaluationtime
@@ -413,11 +436,11 @@ public class ResultXML {
 			ArrayList<String> providers = new ArrayList<String>();
 			for (int w = 0; w < newWExtension.ExtensionsArray.length; ++w) {
 				ExtensionXML x = newWExtension.ExtensionsArray[w];
-
+	
 				for (int i = 0; i < x.ContainerId.length; ++i) {
 					if (x.ContainerId[i] == null)
 						continue;
-
+	
 					if (!providers.contains(x.ProviderName)) {
 						providers.add(x.ProviderName);
 					}
@@ -431,7 +454,7 @@ public class ResultXML {
 					ExtensionXML x = newWExtension.ExtensionsArray[w];
 					
 					Element solution = doc.createElement("Solution");
-//					rootElement.appendChild(solution);
+	//				rootElement.appendChild(solution);
 					added = false;
 					
 					// set cost
@@ -441,7 +464,7 @@ public class ResultXML {
 					//set feasibility
 					solution.setAttribute("feasibility","" + false);
 				
-
+	
 					//create tier container element
 					Element tiers = doc.createElement("Tiers");
 					solution.appendChild(tiers);
@@ -479,13 +502,10 @@ public class ResultXML {
 			}
 			
 			writeFile(doc);
-
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return 0;
 	}
 
 }

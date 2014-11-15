@@ -47,7 +47,10 @@ public class PrintData {
 	public boolean dataWasLoaded = false;
 	
 	// the starting solution
-	public SolutionList solution;
+	public SolutionList initialSolution;
+	
+	// a solution generated from the Resource Environment Extension file
+	public SolutionList resEnvExt;
 	
 	public double minAvailability;
 
@@ -62,7 +65,7 @@ public class PrintData {
 	// CDBList contains information from AddInfData file
 	// newMatrix contains information from SQL database
 	public void setPrintData(RepositoryList CRList,
-			DBList CDBList, SqlBaseParsMatrix newMatrix, SolutionList solution) {
+			DBList CDBList, SqlBaseParsMatrix newMatrix, SolutionList initialSolution, SolutionList resEnvExt) {
 //		@SuppressWarnings("unused")
 //		createconstraintxml newccxml = new createconstraintxml(Configuration, CRList); // TODO: WTF, sovrascrive il file di constraints fornito!
 		// receives constraints from FilePathConst
@@ -143,7 +146,8 @@ public class PrintData {
 		for (int i = 0; i < newdatacollection.CountProviders; i++)
 			newdatacollection.availabilities[i] = CDBList.availabilities[i];
 		
-		this.solution = solution;
+		this.initialSolution = initialSolution;
+		this.resEnvExt = resEnvExt;
 		
 		dataWasLoaded = true;
 	}
@@ -271,10 +275,10 @@ public class PrintData {
 			}
 			out.println(";");
 
-			if (solution != null) {
+			if (initialSolution != null) {
 				out.print("param AmountVM default 0 :=");
 				
-				for (SolutionList.AmountVM i : solution.amounts)
+				for (SolutionList.AmountVM i : initialSolution.amounts)
 					if (i.provider != -1)
 						out.printf("\nv%d p%d i%d t%d %d", i.resource, i.provider, i.tier, i.hour, i.allocation);
 				
@@ -282,7 +286,7 @@ public class PrintData {
 				
 				out.print("param X default 0 :=");
 				
-				for (SolutionList.X i : solution.xs)
+				for (SolutionList.X i : initialSolution.xs)
 					if (i.provider != -1)
 						out.printf("\np%d %d", i.provider, i.taken);
 				
@@ -290,11 +294,36 @@ public class PrintData {
 				
 				out.print("param W default 0 :=");
 				
-				for (SolutionList.W i : solution.ws)
+				for (SolutionList.W i : initialSolution.ws)
 					if (i.provider != -1)
 						out.printf("\nv%d p%d i%d %d", i.resource, i.provider, i.tier, i.taken);
 				
 				out.println(";");
+					
+			} else if (resEnvExt != null) {
+//				out.print("param AmountVM default 0 :=");
+//				
+//				for (SolutionList.AmountVM i : initialSolution.amounts)
+//					if (i.provider != -1)
+//						out.printf("\nv%d p%d i%d t%d %d", i.resource, i.provider, i.tier, i.hour, i.allocation);
+//				
+//				out.println(";");
+//				
+//				out.print("param X default 0 :=");
+//				
+//				for (SolutionList.X i : initialSolution.xs)
+//					if (i.provider != -1)
+//						out.printf("\np%d %d", i.provider, i.taken);
+//				
+//				out.println(";");
+//				
+//				out.print("param W default 0 :=");
+//				
+//				for (SolutionList.W i : initialSolution.ws)
+//					if (i.provider != -1)
+//						out.printf("\nv%d p%d i%d %d", i.resource, i.provider, i.tier, i.taken);
+//				
+//				out.println(";");
 					
 			}
 			

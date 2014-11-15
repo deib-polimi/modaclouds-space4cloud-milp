@@ -17,6 +17,8 @@
 package it.polimi.modaclouds.space4cloud.milp;
 
 import it.polimi.modaclouds.space4cloud.milp.processing.DataProcessing;
+import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsResEnvExt;
+import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSolution;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 public class Solver {
 	
@@ -44,6 +40,8 @@ public class Solver {
 	public Solver(String configurationFile, String initialSolution) {
 		try {
 			Configuration.loadConfiguration(configurationFile);
+			
+			setStartingResEnvExt();
 			if (initialSolution != null && Files.exists(Paths.get(initialSolution)))
 				setStartingSolution(Paths.get(initialSolution).toFile());
 		} catch (Exception e) {
@@ -184,34 +182,28 @@ public class Solver {
 		reset();
 	}
 	
-	private static int getNumOfProviders(File f) {
-		if (f != null && f.exists()) {
-			
-			try {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(f);
-				doc.getDocumentElement().normalize();
-				
-				{
-					NodeList nl = doc.getElementsByTagName("Solution");
-					
-					return nl.getLength();
-				}
-			} catch (Exception e) {
-				return -1;
-			}
-		}
-		
-		return -1;
-	}
-	
 	public void setStartingSolution(File f) {
 		if (f != null && f.exists()) { //&& options.MAP > 1 && getNumOfProviders(f) == options.MAP)
-			Configuration.MAP = getNumOfProviders(f);
+			ArrayList<String> providers = ParsSolution.getProviders(f);
+			Configuration.AllowedProviders = providers;
+			Configuration.MAP = providers.size();
 			Configuration.FilePathStartingSolution = f.getAbsolutePath();
 		} else
 			Configuration.FilePathStartingSolution = null;
+		
+		reset();
+	}
+	
+	public void setStartingResEnvExt() {
+		File f = Paths.get(Configuration.RESOURCE_ENVIRONMENT_EXTENSION).toFile();
+		
+		if (f != null && f.exists()) { //&& options.MAP > 1 && getNumOfProviders(f) == options.MAP)
+			ArrayList<String> providers = ParsResEnvExt.getProviders(f);
+			Configuration.AllowedProviders = providers;
+			Configuration.MAP = providers.size();
+			Configuration.RESOURCE_ENVIRONMENT_EXTENSION = f.getAbsolutePath();
+		} else
+			Configuration.RESOURCE_ENVIRONMENT_EXTENSION = null;
 		
 		reset();
 	}

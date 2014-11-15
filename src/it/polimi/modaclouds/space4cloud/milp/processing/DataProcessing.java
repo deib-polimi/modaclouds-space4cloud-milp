@@ -52,7 +52,8 @@ public class DataProcessing {
 				Configuration.CONSTRAINTS);
 		// transfer of parser results into converter
 		newprintdata.setPrintData(newparser.newparsrepository.resRepositoryList,
-				newparser.newparssql.newDBList, newparser.newparssql.resMatrix, newparser.newparssolution.solution);
+				newparser.newparssql.newDBList, newparser.newparssql.resMatrix,
+				newparser.newparssolution.solution, newparser.newparsresenvext.solution);
 		// creating file data.dat
 		newprintdata.printDataFile();
 
