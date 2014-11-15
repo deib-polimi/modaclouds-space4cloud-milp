@@ -51,17 +51,12 @@ public class Solver {
 		}
 	}
 	
-	private static String date = null;
-	
 	public static String getDate() {
-		if (date != null)
-			return date;
-		
 		Calendar c = Calendar.getInstance();
 		
 		DecimalFormat f = new DecimalFormat("00");
 		
-		date = String.format("%d%s%s-%s%s%s",
+		return String.format("%d%s%s-%s%s%s",
 				c.get(Calendar.YEAR),
 				f.format(c.get(Calendar.MONTH) + 1),
 				f.format(c.get(Calendar.DAY_OF_MONTH)),
@@ -69,8 +64,6 @@ public class Solver {
 				f.format(c.get(Calendar.MINUTE)),
 				f.format(c.get(Calendar.SECOND))
 				);
-		
-		return date;
 	}
 	
 	public void compute() throws MILPException {
