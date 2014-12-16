@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 
 public class Model {
 
-	public boolean print(String file) {
+	public boolean print(String file1, String file2) {
 		
 		try {
-			Files.copy(this.getClass().getResourceAsStream(file), Paths.get(file), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-			Files.copy(this.getClass().getResourceAsStream(file), Paths.get(file), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(this.getClass().getResourceAsStream("/" + Configuration.RUN_MODEL_STANDARD), Paths.get(file1), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(this.getClass().getResourceAsStream("/" + Configuration.RUN_MODEL_STARTING_SOLUTION), Paths.get(file2), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			return false;
 		}
@@ -21,9 +21,6 @@ public class Model {
 
 	public static void print() {
 		Model m = new Model();
-		m.print(Configuration.RUN_MODEL_STANDARD);
-		
-		m = new Model();
-		m.print(Configuration.RUN_MODEL_STARTING_SOLUTION);
+		m.print(Configuration.RUN_MODEL_STANDARD, Configuration.RUN_MODEL_STARTING_SOLUTION);
 	}
 }
