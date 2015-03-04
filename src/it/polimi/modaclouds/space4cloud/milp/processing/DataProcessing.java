@@ -16,9 +16,8 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.processing;
 
-import it.polimi.modaclouds.space4cloud.milp.Configuration;
-import it.polimi.modaclouds.space4cloud.milp.datafiles.AMPLrun;
 import it.polimi.modaclouds.space4cloud.milp.datafiles.Bash;
+import it.polimi.modaclouds.space4cloud.milp.datafiles.FileRun;
 import it.polimi.modaclouds.space4cloud.milp.datafiles.Model;
 import it.polimi.modaclouds.space4cloud.milp.ssh.SshConnector;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ResultXML;
@@ -47,21 +46,10 @@ public class DataProcessing {
 		// constructor for PCM and SQL parser
 		// all parsing functions are called by it
 		newparser = new Parser();
+		
+		PrintData.print(newparser);
 
-		// constructor for converter of PCM-SQL parser results into data.dat
-		newprintdata = new PrintData(Configuration.RUN_DATA,
-				Configuration.CONSTRAINTS);
-		// transfer of parser results into converter
-		newprintdata.setPrintData(newparser.newparsrepository.resRepositoryList,
-				newparser.newparssql.newDBList, newparser.newparssql.resMatrix,
-				newparser.newparssolution.solution, newparser.newparsresenvext.solution);
-		// creating file data.dat
-		newprintdata.printDataFile();
-
-		// creating file AMPL.run
-		AMPLrun newAMPLrun = new AMPLrun();
-		newAMPLrun.AMPLrunToFile(Configuration.RUN_FILE,
-				Configuration.SolverTimeLimit, Configuration.RUN_WORKING_DIRECTORY, Configuration.FilePathStartingSolution);
+		FileRun.print();
 
 		Model.print();
 		
@@ -75,8 +63,6 @@ public class DataProcessing {
 		SshConnector.run();
 
 		// parses AMPL log and results and saves into readable format
-		newresultxml = new ResultXML();
-		newresultxml.printFile(newparser.newparsrepository.resRepositoryList,
-				newparser.newparssql.newDBList, newparser.newparssql.resMatrix);
+		ResultXML.print(newparser);
 	}
 }

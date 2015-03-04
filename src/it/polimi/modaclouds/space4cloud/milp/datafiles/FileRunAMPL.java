@@ -24,14 +24,15 @@ import java.util.Scanner;
 
 //this class creates local copy of AMPL.run file
 //it is created and uploaded each time to have possibility to set CPLEX solver time limit
-public class AMPLrun {
+public class FileRunAMPL extends FileRun {
 
 	// main function
 	// file saves in AMPLrunFilePath
 	// TimeLimit is used to set CPLEX solver time limit
 	// UploadPath - directory om AMPL server (as it is required to use command
 	// "cd UploadPath" in AMPL
-	public void AMPLrunToFile(String AMPLrunFilePath, String TimeLimit,
+	@Override
+	public void print(String AMPLrunFilePath, String TimeLimit,
 			String UploadPath, String FilePathStartingSolution) {
 		
 		try {
@@ -97,5 +98,11 @@ public class AMPLrun {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
+	}
+	
+	public static void print() {
+		FileRunAMPL newAMPLrun = new FileRunAMPL();
+		newAMPLrun.print(Configuration.RUN_FILE,
+				Configuration.SolverTimeLimit, Configuration.RUN_WORKING_DIRECTORY, Configuration.FilePathStartingSolution);
 	}
 }

@@ -42,17 +42,30 @@ public class Configuration {
 	public static String RUN_MODEL_STANDARD = "model.mod";
 	public static String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
 	public static String RUN_DATA = "data.dat"; //sets where temp AMPL file data.dat will be saved 
-	public static String RUN_SOLVER = "/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp";
-	public static String RUN_AMPL_FOLDER = "/usr/optimization/ILOG/ampl20060626.cplex101";
+	public static String RUN_SOLVER = "/usr/optimization/cplex-studio/cplex/bin/x86-64_linux/cplexamp";
+	public static String RUN_AMPL_FOLDER = "/usr/optimization/ampl";
 	public static String RUN_LOG = "log.tmp";//sets where temp AMPL file log.tmp will be saved 
 	public static String RUN_RES = "shortrez.out";//sets where temp AMPL file shortrez.out will be saved
 	public static String DEFAULTS_BASH = "bash.run";
+	
+	// TODO
+	public static String RUN_FILE_CMPL = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
+	public static String RUN_MODEL_STANDARD_CMPL = "model.mod";
+	public static String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.mod";
+	public static String RUN_DATA_CMPL = "data.dat"; //sets where temp AMPL file data.dat will be saved 
+	public static String RUN_SOLVER_CMPL = "/usr/optimization/cplex-studio/cplex/bin/x86-64_linux/cplexamp";
+	public static String RUN_CMPL_FOLDER = "/usr/optimization/ampl";
+	public static String RUN_LOG_CMPL = "log.tmp";//sets where temp AMPL file log.tmp will be saved 
+	public static String RUN_RES_CMPL = "shortrez.out";//sets where temp AMPL file shortrez.out will be saved
+	public static String DEFAULTS_BASH_CMPL = "bash.run";
+	
+	public static Solver SOLVER = Solver.AMPL;
 	
 	// Information about the DB
 	public static String DB_CONNECTION_FILE;
 
 	// Information about the machine with AMPL
-	public static String SSH_HOST = "ch14r4.dei.polimi.it";	//AMPL server's address (ch14r4.dei.polimi.it)
+	public static String SSH_HOST = "specclient1.dei.polimi.it";	//AMPL server's address (ch14r4.dei.polimi.it)
 	public static String SSH_USER_NAME;						//AMPL server's login (should have access to upload directory)
 	public static String SSH_PASSWORD;						//AMPL server's password
 	
@@ -79,6 +92,13 @@ public class Configuration {
 			Files.deleteIfExists(Paths.get(RUN_LOG));
 			Files.deleteIfExists(Paths.get(RUN_MODEL_STANDARD));
 			Files.deleteIfExists(Paths.get(RUN_MODEL_STARTING_SOLUTION));
+			
+			Files.deleteIfExists(Paths.get(RUN_FILE_CMPL));
+			Files.deleteIfExists(Paths.get(RUN_DATA_CMPL));
+			Files.deleteIfExists(Paths.get(RUN_RES_CMPL));
+			Files.deleteIfExists(Paths.get(RUN_LOG_CMPL));
+			Files.deleteIfExists(Paths.get(RUN_MODEL_STANDARD_CMPL));
+			Files.deleteIfExists(Paths.get(RUN_MODEL_STARTING_SOLUTION_CMPL));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -98,6 +118,42 @@ public class Configuration {
 	public static String GENERATED_MULTI_CLOUD_EXT = "generated-mce.xml";
 	public static String GENERATED_SOLUTION = "generated-solution.xml";
 	public static String GENERATED_ADDINF = "generated-addinf.xml";
+	
+	public static enum Solver {
+		AMPL("AMPL"), CMPL("CMPL");
+		
+		private String name;
+		
+		private Solver(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
+		}
+
+		public static Solver getById(int id) {
+			Solver[] values = Solver.values();
+			if (id < 0)
+				id = 0;
+			else if (id >= values.length)
+				id = values.length - 1;
+			return values[id];
+		}
+
+		public static int size() {
+			return Solver.values().length;			
+		}
+		
+		public static Solver getByName(String name) {
+			Solver[] values = Solver.values();
+			for (Solver s : values)
+				if (s.name.equals(name))
+					return s;
+			return null;
+		}
+
+	}
 
 	public static void saveConfiguration(String filePath) throws IOException{
 		FileOutputStream fos = new FileOutputStream(filePath);
@@ -128,7 +184,20 @@ public class Configuration {
 		prop.put("RUN_LOG", RUN_LOG);
 		prop.put("RUN_RES", RUN_RES);
 		
+		prop.put("RUN_MODEL_STANDARD_CMPL", RUN_MODEL_STANDARD_CMPL);
+		prop.put("RUN_MODEL_STARTING_SOLUTION_CMPL", RUN_MODEL_STARTING_SOLUTION_CMPL);
+		prop.put("RUN_DATA_CMPL", RUN_DATA_CMPL);
+		prop.put("RUN_SOLVER_CMPL", RUN_SOLVER);
+		prop.put("RUN_CMPL_FOLDER", RUN_CMPL_FOLDER);
+		prop.put("RUN_FILE_CMPL", RUN_FILE_CMPL);
+		prop.put("RUN_LOG_CMPL", RUN_LOG_CMPL);
+		prop.put("RUN_RES_CMPL", RUN_RES_CMPL);
+		
 		prop.put("DEFAULTS_BASH", DEFAULTS_BASH);
+		
+		prop.put("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
+		
+		prop.put("SOLVER", SOLVER.getName());
 		
 		prop.store(fos, "S4C-MILP configuration properties");
 		fos.flush();
@@ -163,7 +232,20 @@ public class Configuration {
 		RUN_LOG = prop.getProperty("RUN_LOG", RUN_LOG);
 		RUN_RES = prop.getProperty("RUN_RES", RUN_RES);
 		
+		RUN_MODEL_STANDARD_CMPL = prop.getProperty("RUN_MODEL_STANDARD_CMPL", RUN_MODEL_STANDARD_CMPL);
+		RUN_MODEL_STARTING_SOLUTION_CMPL = prop.getProperty("RUN_MODEL_STARTING_SOLUTION_CMPL", RUN_MODEL_STARTING_SOLUTION_CMPL);
+		RUN_DATA_CMPL = prop.getProperty("RUN_DATA_CMPL", RUN_DATA_CMPL);
+		RUN_SOLVER_CMPL = prop.getProperty("RUN_SOLVER_CMPL", RUN_SOLVER_CMPL);
+		RUN_CMPL_FOLDER = prop.getProperty("RUN_CMPL_FOLDER", RUN_CMPL_FOLDER);
+		RUN_FILE_CMPL = prop.getProperty("RUN_FILE_CMPL", RUN_FILE_CMPL);
+		RUN_LOG_CMPL = prop.getProperty("RUN_LOG_CMPL", RUN_LOG_CMPL);
+		RUN_RES_CMPL = prop.getProperty("RUN_RES_CMPL", RUN_RES_CMPL);
+		
 		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
+		
+		DEFAULTS_BASH_CMPL = prop.getProperty("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
+		
+		SOLVER = Solver.getByName(prop.getProperty("SOLVER", SOLVER.getName()));
 	}
 	
 	/**

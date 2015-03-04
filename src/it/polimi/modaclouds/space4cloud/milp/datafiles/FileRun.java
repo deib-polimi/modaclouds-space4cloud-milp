@@ -2,17 +2,16 @@ package it.polimi.modaclouds.space4cloud.milp.datafiles;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
-public abstract class Bash {
+public abstract class FileRun {
+	public abstract void print(String AMPLrunFilePath, String TimeLimit, String UploadPath, String FilePathStartingSolution);
 	
-	public abstract boolean print(String file);
-
 	public static void print() {
 		switch (Configuration.SOLVER) {
 		case AMPL:
-			BashAMPL.print();
+			FileRunAMPL.print();
 			break;
 		case CMPL:
-			BashCMPL.print();
+			FileRunCMPL.print();
 			break;
 		}
 	}
