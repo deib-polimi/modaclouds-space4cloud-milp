@@ -7,7 +7,7 @@ public class SshConnectorAMPL extends SshConnector {
 
 	@Override
 	public void execute() {
-		exec(String.format("mkdir %s", Configuration.RUN_WORKING_DIRECTORY));
+		exec(String.format("mkdir -p %s", Configuration.RUN_WORKING_DIRECTORY));
 		
 		sendFileToWorkingDir(Configuration.RUN_DATA);
 		sendFileToWorkingDir(Configuration.RUN_FILE);

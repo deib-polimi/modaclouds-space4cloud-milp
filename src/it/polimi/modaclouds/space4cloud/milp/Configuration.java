@@ -36,7 +36,7 @@ public class Configuration {
 	public static String PALLADIO_SYSTEM_MODEL;		//Path to System Diagram
 	
 	// Information used in the AMPL.run file
-	public static String DEFAULTS_WORKING_DIRECTORY = "/home/s4c/new64"; //upload directory on AMPL server
+	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/milp"; //upload directory on AMPL server
 	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
 	public static String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
 	public static String RUN_MODEL_STANDARD = "model.mod";
@@ -53,7 +53,7 @@ public class Configuration {
 	public static String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.cmpl";
 	public static String RUN_DATA_CMPL = "data.cdat";
 	public static String RUN_SOLVER_CMPL = "cbc"; // glpk, cbc, scip, gurobi, cplex
-	public static String RUN_CMPL_FOLDER = "/usr/optimization/Cmpl";
+	public static String RUN_CMPL_FOLDER = "/usr/share/Cmpl";
 	public static String RUN_LOG_CMPL = "solution.log"; 
 	public static String RUN_RES_CMPL = "solution.sol";
 	public static String DEFAULTS_BASH_CMPL = "bashCMPL.run";
