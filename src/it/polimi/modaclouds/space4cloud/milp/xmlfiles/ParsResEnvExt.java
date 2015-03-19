@@ -120,7 +120,7 @@ public class ParsResEnvExt {
 				for (ResourceContainer rc : rme.getResourceContainer()) {
 					String provider = rc.getProvider();
 					
-					if (!res.contains(provider))
+					if (provider != null && !res.contains(provider))
 						res.add(provider);
 				}
 			} catch (Exception e) {

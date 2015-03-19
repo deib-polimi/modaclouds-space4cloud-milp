@@ -118,7 +118,7 @@ public class SQLParser {
 			
 			Statement st = conn.createStatement();
 
-			if (allowedProviders == null) {
+			if (allowedProviders == null || allowedProviders.size() == 0) {
 				// receives amount of providers
 				countproviders = getTableCount(SQLRequestsCollection.CountProvidersRequest);
 			} else {
@@ -138,7 +138,7 @@ public class SQLParser {
 				researchSqlProviders += "'" + allowedProviders.get(i) + "')";
 			}
 			
-			if (allowedRegions != null) {
+			if (allowedRegions != null && allowedRegions.size() > 0) {
 				researchSqlRegions = " AND cost.region IN (";
 				int i;
 				for (i = 0; i < allowedRegions.size()-1; ++i)
@@ -160,7 +160,7 @@ public class SQLParser {
 				// receives list of providers
 				ResultSet rp = st.executeQuery(SQLRequestsCollection.ProviderRequest);
 				while (rp.next()) {
-					if (allowedProviders == null || allowedProviders.contains(rp.getString(2))) {
+					if (allowedProviders == null || allowedProviders.size() == 0 || allowedProviders.contains(rp.getString(2))) {
 						String Fstr = rp.getString(1);
 						ProviderId[count] = Integer.parseInt(Fstr);
 						Fstr = rp.getString(2);

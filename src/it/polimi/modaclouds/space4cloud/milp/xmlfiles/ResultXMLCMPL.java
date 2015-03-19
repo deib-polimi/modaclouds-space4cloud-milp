@@ -52,15 +52,15 @@ public class ResultXMLCMPL extends ResultXML {
 				int i;
 				if ((i = line.indexOf(timeModel)) > -1) {
 					InputTime = line.substring(i + timeModel.length());
-					InputTime = InputTime.substring(0, InputTime.indexOf("seconds"));
-					InputTime.trim();
+					InputTime = InputTime.substring(0, InputTime.indexOf(" seconds"));
+					InputTime = InputTime.trim();
 				} else if ((i = line.indexOf(timeSol)) > -1) {
 					SolveTime = line.substring(i + timeSol.length());
-					SolveTime = SolveTime.substring(0, SolveTime.indexOf("seconds"));
-					SolveTime.trim();
+					SolveTime = SolveTime.substring(0, SolveTime.indexOf(" seconds"));
+					SolveTime = SolveTime.trim();
 				} else if ((i = line.indexOf(obj)) > -1) {
 					Objective = line.substring(i + obj.length());
-					Objective.trim();
+					Objective = Objective.trim();
 					hassolution = true;
 					isfeasible = true;
 				} else if ((i = line.indexOf(fail)) > -1) {
