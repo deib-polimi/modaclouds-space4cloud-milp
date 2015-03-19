@@ -44,22 +44,22 @@ public class Configuration {
 	public static String RUN_DATA = "data.dat"; //sets where temp AMPL file data.dat will be saved 
 	public static String RUN_SOLVER = "/usr/optimization/cplex-studio/cplex/bin/x86-64_linux/cplexamp";
 	public static String RUN_AMPL_FOLDER = "/usr/optimization/ampl";
-	public static String RUN_LOG = "log.tmp";//sets where temp AMPL file log.tmp will be saved 
-	public static String RUN_RES = "shortrez.out";//sets where temp AMPL file shortrez.out will be saved
-	public static String DEFAULTS_BASH = "bash.run";
+	public static String RUN_LOG = "solution.log"; //"log.tmp";//sets where temp AMPL file log.tmp will be saved 
+	public static String RUN_RES = "solution.sol"; //"shortrez.out";//sets where temp AMPL file shortrez.out will be saved
+	public static String DEFAULTS_BASH = "bashAMPL.run";
 	
-	// TODO
-	public static String RUN_FILE_CMPL = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
-	public static String RUN_MODEL_STANDARD_CMPL = "model.mod";
-	public static String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.mod";
-	public static String RUN_DATA_CMPL = "data.dat"; //sets where temp AMPL file data.dat will be saved 
-	public static String RUN_SOLVER_CMPL = "/usr/optimization/cplex-studio/cplex/bin/x86-64_linux/cplexamp";
-	public static String RUN_CMPL_FOLDER = "/usr/optimization/ampl";
-	public static String RUN_LOG_CMPL = "log.tmp";//sets where temp AMPL file log.tmp will be saved 
-	public static String RUN_RES_CMPL = "shortrez.out";//sets where temp AMPL file shortrez.out will be saved
-	public static String DEFAULTS_BASH_CMPL = "bash.run";
+	public static String RUN_FILE_CMPL = "CMPL.run";
+	public static String RUN_MODEL_STANDARD_CMPL = "model.cmpl";
+	public static String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.cmpl";
+	public static String RUN_DATA_CMPL = "data.cdat";
+	public static String RUN_SOLVER_CMPL = "cbc"; // glpk, cbc, scip, gurobi, cplex
+	public static String RUN_CMPL_FOLDER = "/usr/optimization/Cmpl";
+	public static String RUN_LOG_CMPL = "solution.log"; 
+	public static String RUN_RES_CMPL = "solution.sol";
+	public static String DEFAULTS_BASH_CMPL = "bashCMPL.run";
+	public static int CMPL_THREADS = 4;
 	
-	public static Solver SOLVER = Solver.AMPL;
+	public static Solver MATH_SOLVER = Solver.CMPL;
 	
 	// Information about the DB
 	public static String DB_CONNECTION_FILE;
@@ -150,7 +150,7 @@ public class Configuration {
 			for (Solver s : values)
 				if (s.name.equals(name))
 					return s;
-			return null;
+			return values[0];
 		}
 
 	}
@@ -192,12 +192,13 @@ public class Configuration {
 		prop.put("RUN_FILE_CMPL", RUN_FILE_CMPL);
 		prop.put("RUN_LOG_CMPL", RUN_LOG_CMPL);
 		prop.put("RUN_RES_CMPL", RUN_RES_CMPL);
+		prop.put("CMPL_THREADS", CMPL_THREADS);
 		
 		prop.put("DEFAULTS_BASH", DEFAULTS_BASH);
 		
 		prop.put("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
 		
-		prop.put("SOLVER", SOLVER.getName());
+		prop.put("MATH_SOLVER", MATH_SOLVER.getName());
 		
 		prop.store(fos, "S4C-MILP configuration properties");
 		fos.flush();
@@ -240,12 +241,15 @@ public class Configuration {
 		RUN_FILE_CMPL = prop.getProperty("RUN_FILE_CMPL", RUN_FILE_CMPL);
 		RUN_LOG_CMPL = prop.getProperty("RUN_LOG_CMPL", RUN_LOG_CMPL);
 		RUN_RES_CMPL = prop.getProperty("RUN_RES_CMPL", RUN_RES_CMPL);
+		try {
+			CMPL_THREADS = Integer.parseInt(prop.getProperty("CMPL_THREADS", String.valueOf(CMPL_THREADS)));
+		} catch (Exception e) { }
 		
 		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
 		
 		DEFAULTS_BASH_CMPL = prop.getProperty("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
 		
-		SOLVER = Solver.getByName(prop.getProperty("SOLVER", SOLVER.getName()));
+		MATH_SOLVER = Solver.getByName(prop.getProperty("MATH_SOLVER", MATH_SOLVER.getName()));
 	}
 	
 	/**

@@ -16,7 +16,7 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.xmlfiles;
 
-import it.polimi.modaclouds.qos_models.schema.IaasService;
+import it.polimi.modaclouds.qos_models.schema.CloudService;
 import it.polimi.modaclouds.qos_models.schema.Location;
 import it.polimi.modaclouds.qos_models.schema.MultiCloudExtension;
 import it.polimi.modaclouds.qos_models.schema.MultiCloudExtensions;
@@ -252,9 +252,10 @@ public abstract class ResultXML {
 				rc.setProvider(x.ProviderName);
 				rc.setId(x.ContainerId[i]);
 
-				IaasService is = new IaasService();
+				CloudService is = new CloudService();
 				is.setServiceName(x.ServiceName[i]);
 				is.setServiceType(x.ServiceType[i]);
+				is.setServiceCategory("IaaS");
 				
 				String region = x.Region[i]; 
 				if (region != null && region.length() > 0) {
@@ -276,7 +277,7 @@ public abstract class ResultXML {
 				
 				is.setReplicas(replicas);
 				
-				rc.setCloudResource(is);
+				rc.setCloudElement(is);
 				rme.getResourceContainer().add(rc);
 			}
 		}
@@ -377,7 +378,7 @@ public abstract class ResultXML {
 	}
 	
 	public static void print(Parser p) {
-		switch (Configuration.SOLVER) {
+		switch (Configuration.MATH_SOLVER) {
 		case AMPL:
 			ResultXMLAMPL.print(p);
 			break;

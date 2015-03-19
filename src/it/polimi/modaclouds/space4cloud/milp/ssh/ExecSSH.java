@@ -50,11 +50,6 @@ public class ExecSSH {
 		ScpPasswd = Configuration.SSH_PASSWORD;
 		UploadPath = Configuration.RUN_WORKING_DIRECTORY;
 	}
-	
-	public List<String> mainExec() {
-		return mainExec("bash " + Configuration.RUN_WORKING_DIRECTORY + "/"
-				+ Configuration.DEFAULTS_BASH);
-	}
 
 	// main execution function
 	// returns in List<Strings> all answers of the server

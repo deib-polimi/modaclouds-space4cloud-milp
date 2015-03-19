@@ -29,7 +29,7 @@ public class BashCMPL extends Bash {
 					Configuration.RUN_WORKING_DIRECTORY,
 					Configuration.RUN_LOG_CMPL,
 					Configuration.RUN_RES_CMPL,
-					Configuration.RUN_CMPL_FOLDER,
+					Configuration.RUN_WORKING_DIRECTORY,
 					Configuration.RUN_FILE_CMPL);
 			
 			out.flush();

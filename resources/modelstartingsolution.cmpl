@@ -1,0 +1,33 @@
+%%arg -solver %s
+%%arg -solutionAscii %s
+%%display var AmountVM* PartialArrRate*
+%%display ignoreCons
+%%display nonZeros
+%%opt cplex threads %4$d
+%%opt cbc threads %4$d
+%%opt glpk threads %4$d
+
+%%data %s : CONTAINER set, PROVIDER set, CLASS_REQUEST set, TYPE_VM set, TIME_INT set, COMPONENT set, ProbabilityToBeInComponent[CLASS_REQUEST, COMPONENT], ArrRate[TIME_INT], MaximumSR[CLASS_REQUEST, COMPONENT], Alpha[CLASS_REQUEST], Speed[TYPE_VM, PROVIDER, CONTAINER], Cost[TYPE_VM, PROVIDER, CONTAINER], MaxResponseTime[CLASS_REQUEST, COMPONENT], MinProv, MaxVMPerContainer, MinArrRate[PROVIDER], PartitionComponents[COMPONENT, CONTAINER], Availability[PROVIDER], MaxUnavailability, AmountVM[TYPE_VM, PROVIDER, CONTAINER, TIME_INT], X[PROVIDER], W[TYPE_VM, PROVIDER, CONTAINER]
+
+variables:
+  PartialArrRate[PROVIDER, TIME_INT]: real[0..];
+  DiffResponseTime[CLASS_REQUEST, PROVIDER, CONTAINER, TIME_INT, COMPONENT]: real;
+
+objectives:
+  Min_Response_Time: {sum{k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT:ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0} DiffResponseTime[k, p, i, t, c]}->min;
+
+constraints:
+  #ArrRatePerProvider1
+  {p in PROVIDER, t in TIME_INT: X[p]*MinArrRate[p]*ArrRate[t] <= PartialArrRate[p, t];}
+
+  #ArrRatePerProvider2
+  {p in PROVIDER, t in TIME_INT: PartialArrRate[p, t] <= X[p]*ArrRate[t];}
+
+  #Efficiency
+  {t in TIME_INT: sum{p in PROVIDER:PartialArrRate[p, t]} = ArrRate[t];}
+
+  #Assign_Response_Time
+  {k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT, ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0: DiffResponseTime[k, p, i, t, c] = MaximumSR[k, c]*MaxResponseTime[k, c]*sum{v in TYPE_VM}(AmountVM[v, p, i, t]*Speed[v, p, i]) - PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]*sum{d in CLASS_REQUEST, g in COMPONENT: ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0} (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g]) + sum{v in TYPE_VM}(AmountVM[v, p, i, t]);}
+
+  #AvailabilityConstraint
+  sum{p in PROVIDER: lg(1 - Availability[p]) * X[p]} <= lg(MaxUnavailability);

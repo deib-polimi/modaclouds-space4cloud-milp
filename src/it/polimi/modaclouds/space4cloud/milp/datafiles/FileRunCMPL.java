@@ -28,11 +28,9 @@ public class FileRunCMPL extends FileRun {
 			
 			out.printf(baseFile,
 					Configuration.RUN_WORKING_DIRECTORY,
+					Configuration.RUN_CMPL_FOLDER,
 					FilePathStartingSolution != null ? Configuration.RUN_MODEL_STARTING_SOLUTION_CMPL : Configuration.RUN_MODEL_STANDARD_CMPL,
-					Configuration.RUN_DATA_CMPL,
-					Configuration.RUN_SOLVER_CMPL,
-					Configuration.RUN_LOG_CMPL,
-					Configuration.RUN_RES_CMPL
+					Configuration.RUN_LOG_CMPL
 					);
 			
 			out.flush();

@@ -8,7 +8,7 @@ public abstract class Model {
 	public abstract boolean print(String file1, String file2);
 
 	public static void print() {
-		switch (Configuration.SOLVER) {
+		switch (Configuration.MATH_SOLVER) {
 		case AMPL:
 			ModelAMPL.print();
 			break;

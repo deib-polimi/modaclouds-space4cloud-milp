@@ -16,6 +16,8 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.db;
 
+import it.polimi.modaclouds.space4cloud.milp.types.DefaultDataCollection;
+
 //this class contains requests to the SQL database
 public final class SQLRequestsCollection {
 
@@ -56,6 +58,11 @@ public final class SQLRequestsCollection {
     		"WHERE cloudresource_cost.Cost_id=cost.id AND cost.unit='per_hour' AND cloudresource_allocation.VirtualHWResource_id=virtualhwresource.id AND virtualhwresource.type='memory' AND cloudresource_cost.CloudResource_id=cloudresource_allocation.CloudResource_id AND cloudresource_allocation.CloudResource_id=iaas_service_composedof.CloudResource_id AND iaas_service_composedof.IaaS_id=iaas_service.id AND cloudprovider.id = iaas_service.cloudprovider_id AND cost.description NOT LIKE 'Reserved%%'%s%s;";
     
     public final static String AvaliabilityRequest =
-    		"SELECT id, name, 0.95 as value FROM cloudprovider WHERE true%s;";
+    		"SELECT cloudprovider.id, cloudprovider.name, coalesce(IF(avg(regions.availability) >= 1, 0.999, avg(regions.availability)), " + DefaultDataCollection.availability + ") as 'value' " +
+    		"FROM regions RIGHT JOIN cloudprovider " +
+    		"ON regions.CloudProvider_id = cloudprovider.id " +
+    		"WHERE true%s " +
+    		"GROUP BY cloudprovider.id;";
+//    "SELECT id, name, 0.95 as value FROM cloudprovider WHERE true%s;";
 
 }

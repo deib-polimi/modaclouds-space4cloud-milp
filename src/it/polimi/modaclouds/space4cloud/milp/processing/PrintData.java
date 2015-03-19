@@ -162,7 +162,7 @@ public abstract class PrintData {
 	public abstract boolean printDataFile();
 	
 	public static void print(Parser p) {
-		switch (Configuration.SOLVER) {
+		switch (Configuration.MATH_SOLVER) {
 		case AMPL:
 			PrintDataAMPL.print(p);
 			break;

@@ -6,7 +6,7 @@ public abstract class FileRun {
 	public abstract void print(String AMPLrunFilePath, String TimeLimit, String UploadPath, String FilePathStartingSolution);
 	
 	public static void print() {
-		switch (Configuration.SOLVER) {
+		switch (Configuration.MATH_SOLVER) {
 		case AMPL:
 			FileRunAMPL.print();
 			break;

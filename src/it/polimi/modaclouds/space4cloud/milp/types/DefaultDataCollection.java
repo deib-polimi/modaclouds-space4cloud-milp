@@ -21,15 +21,15 @@ package it.polimi.modaclouds.space4cloud.milp.types;
 // and are added to data.dat file to notation reasons
 public class DefaultDataCollection {
 
-	public double ProbabilityToBeInComponent=0.1;//probabilities that classes will have ways cross components
-	public double ArrRate=100;//arrival rate
-	public double MaximumSR=1;//maximum service rate
-	public int PartitionComponents=1;//binary variable which shows that two components are in the same container
-	public double Speed=1;//Speed of VM type
-	public double Cost=0.06;//Cost of VM type
-	public double MaxResponseTime=0.04;//Maximum Response time for component
-	public double MinArrRate=0.2;//minimum arrival rate per provider
-	public double Alpha=0.1;//proportion of arrival rate on class k
-	public double availability = 0.95;
+	public static final double ProbabilityToBeInComponent=0.1;//probabilities that classes will have ways cross components
+	public static final double ArrRate=100;//arrival rate
+	public static final double MaximumSR=1;//maximum service rate
+	public static final int PartitionComponents=1;//binary variable which shows that two components are in the same container
+	public static final double Speed=1;//Speed of VM type
+	public static final double Cost=0.06;//Cost of VM type
+	public static final double MaxResponseTime=0.04;//Maximum Response time for component
+	public static final double MinArrRate=0.2;//minimum arrival rate per provider
+	public static final double Alpha=0.1;//proportion of arrival rate on class k
+	public static final double availability = 0.95;
 
 }

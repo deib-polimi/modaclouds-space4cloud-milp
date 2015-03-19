@@ -17,59 +17,65 @@
 package it.polimi.modaclouds.space4cloud.milp.ssh;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
-import it.polimi.modaclouds.space4cloud.milp.Solver;
-import it.polimi.modaclouds.space4cloud.milp.ssh.ExecSSH;
-import it.polimi.modaclouds.space4cloud.milp.ssh.ScpTo;
 
 //this class is used to create connection to AMPL server (wrapper)
-public class SshConnector {
+public abstract class SshConnector {
+	
+	// this object runs bash-script on AMPL server
+	private ExecSSH newExecSSH;
+	
+	// this object uploads files on AMPL server
+	private ScpTo newScpTo;
+	
+	// this block downloads logs and results of AMPL
+	private ScpFrom newScpFrom;
+	
+	public SshConnector() {
+		newExecSSH = new ExecSSH();
+		newScpTo = new ScpTo();
+		newScpFrom = new ScpFrom();
+	}
+	
+	private void sendFile(String localFile, String remoteFile) {
+		newScpTo.sendfile(localFile, remoteFile);
+	}
+	
+	public void sendFileToWorkingDir(String file) {
+		sendFile(file, Configuration.RUN_WORKING_DIRECTORY + "/" + file);
+		fixFile(Configuration.RUN_WORKING_DIRECTORY, file);
+	}
+	
+	public void exec(String command) {
+		newExecSSH.mainExec(command);
+	}
+	
+	private void receiveFile(String localFile, String remoteFile) {
+		newScpFrom.receivefile(localFile, remoteFile);
+	}
+	
+	public void receiveFileFromWorkingDir(String file) {
+		receiveFile(file, Configuration.RUN_WORKING_DIRECTORY + "/" + file);
+	}
+	
+	private void fixFile(String folder, String file) {
+		exec(String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
+						folder,
+						file));
+	}
 
 	// main execution function
 	public static void run() {
-		// this object runs bash-script on AMPL server
-		ExecSSH newExecSSH = new ExecSSH();
+		switch (Configuration.MATH_SOLVER) {
+		case AMPL:
+			SshConnectorAMPL.run();
+			break;
+		case CMPL:
+			SshConnectorCMPL.run();
+			break;
+		}
 		
-		newExecSSH.mainExec(String.format("mkdir %s", Configuration.RUN_WORKING_DIRECTORY));
-		
-		// this object uploads files on AMPL server
-		ScpTo newScpTo = new ScpTo();
-		newScpTo.sendfile(Configuration.RUN_DATA, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_DATA);
-		newScpTo.sendfile(Configuration.RUN_FILE, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_FILE);
-		
-		newScpTo.sendfile(Configuration.DEFAULTS_BASH, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.DEFAULTS_BASH);
-		newScpTo.sendfile(Configuration.RUN_MODEL_STANDARD, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STANDARD);
-		newScpTo.sendfile(Configuration.RUN_MODEL_STARTING_SOLUTION, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL_STARTING_SOLUTION);
-		
-		newExecSSH.mainExec(
-				String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
-						Configuration.RUN_WORKING_DIRECTORY,
-						Configuration.RUN_DATA));
-		newExecSSH.mainExec(
-				String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
-						Configuration.RUN_WORKING_DIRECTORY,
-						Configuration.RUN_FILE));
-		newExecSSH.mainExec(
-				String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
-						Configuration.RUN_WORKING_DIRECTORY,
-						Configuration.DEFAULTS_BASH));
-		newExecSSH.mainExec(
-				String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
-						Configuration.RUN_WORKING_DIRECTORY,
-						Configuration.RUN_MODEL_STANDARD));
-		newExecSSH.mainExec(
-				String.format("cd %1$s && tr -d '\r' < %2$s > %2$s-bak && mv %2$s-bak %2$s",
-						Configuration.RUN_WORKING_DIRECTORY,
-						Configuration.RUN_MODEL_STARTING_SOLUTION));
-		
-		newExecSSH.mainExec();
-
-		// this block downloads logs and results of AMPL
-		ScpFrom newScpFrom = new ScpFrom();
-		newScpFrom.receivefile(Configuration.RUN_LOG, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_LOG);
-		newScpFrom.receivefile(Configuration.RUN_RES, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_RES);
-		
-		if (Solver.removeTempFiles)
-			newExecSSH.mainExec(String.format("rm -rf %s", Configuration.RUN_WORKING_DIRECTORY));
 	}
+	
+	public abstract void execute();
 
 }

@@ -2,22 +2,44 @@ package it.polimi.modaclouds.space4cloud.milp.datafiles;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class ModelCMPL extends Model {
 
 	@Override
 	public boolean print(String file1, String file2) {
 		
+		return singlePrint(Configuration.RUN_MODEL_STANDARD_CMPL, file1) && singlePrint(Configuration.RUN_MODEL_STARTING_SOLUTION_CMPL, file2);
+	}
+	
+	private boolean singlePrint(String origFile, String destFile) {
 		try {
-			Files.copy(this.getClass().getResourceAsStream("/" + Configuration.RUN_MODEL_STANDARD_CMPL), Paths.get(file1), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-			Files.copy(this.getClass().getResourceAsStream("/" + Configuration.RUN_MODEL_STARTING_SOLUTION_CMPL), Paths.get(file2), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			PrintWriter out = new PrintWriter(new FileWriter(destFile));
+			
+			String baseFile = "";
+			
+			Scanner sc = new Scanner(this.getClass().getResourceAsStream("/" + origFile));
+			
+			while (sc.hasNextLine())
+				baseFile += sc.nextLine() + "\n";
+			
+			sc.close();
+			
+			out.print(String.format(baseFile,
+					Configuration.RUN_SOLVER_CMPL,
+					Configuration.RUN_RES_CMPL,
+					Configuration.RUN_DATA_CMPL,
+					Configuration.CMPL_THREADS));
+			
+			out.flush();
+			out.close();
+			
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
-		
-		return true;
 	}
 
 	public static void print() {

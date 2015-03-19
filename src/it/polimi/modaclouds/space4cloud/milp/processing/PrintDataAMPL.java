@@ -1,6 +1,7 @@
 package it.polimi.modaclouds.space4cloud.milp.processing;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
+import it.polimi.modaclouds.space4cloud.milp.types.DefaultDataCollection;
 import it.polimi.modaclouds.space4cloud.milp.xmldatalists.SolutionList;
 
 import java.io.FileWriter;
@@ -55,7 +56,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param ProbabilityToBeInComponent default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.ProbabilityToBeInComponent));
+					doubleFormatter.format(DefaultDataCollection.ProbabilityToBeInComponent));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf("\nk%d c%d %s", i, j,
@@ -64,14 +65,14 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param ArrRate default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.ArrRate));
+					doubleFormatter.format(DefaultDataCollection.ArrRate));
 			for (int i = 1; i <= newdatacollection.CountTimeInts; ++i) {
 				out.printf("\nt%d %s", i, doubleFormatter.format(newdatacollection.ArrRate[i - 1]));
 			}
 			out.println(";");
 
 			out.printf("param MaximumSR default %s :=", 
-					doubleFormatter.format(newdatacollection.defaultvalues.MaximumSR));
+					doubleFormatter.format(DefaultDataCollection.MaximumSR));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf("\nk%d c%d %s", i, j,
@@ -80,7 +81,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param PartitionComponents default %d :=",
-					newdatacollection.defaultvalues.PartitionComponents);
+					DefaultDataCollection.PartitionComponents);
 			for (int i = 1; i <= newdatacollection.CountComponents; ++i)
 				for (int j = 1; j <= newdatacollection.CountContainers; ++j) {
 					out.printf("\nc%d i%d %d", i, j,
@@ -89,7 +90,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param Speed default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.Speed));
+					doubleFormatter.format(DefaultDataCollection.Speed));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
@@ -99,7 +100,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param Cost default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.Cost));
+					doubleFormatter.format(DefaultDataCollection.Cost));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
@@ -109,7 +110,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param MaxResponseTime default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.MaxResponseTime));
+					doubleFormatter.format(DefaultDataCollection.MaxResponseTime));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf("\nk%d c%d %s", i, j,
@@ -122,7 +123,7 @@ public class PrintDataAMPL extends PrintData {
 			out.printf("param MaxVMPerContainer := %d;\n", newdatacollection.MaxVMPerContainer);
 
 			out.printf("param MinArrRate default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.MinArrRate));
+					doubleFormatter.format(DefaultDataCollection.MinArrRate));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i) {
 				out.printf("\np%d %s", i,
 						doubleFormatter.format(newdatacollection.MinArrRate[i - 1]));
@@ -130,7 +131,7 @@ public class PrintDataAMPL extends PrintData {
 			out.println(";");
 
 			out.printf("param Alpha default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.Alpha));
+					doubleFormatter.format(DefaultDataCollection.Alpha));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i) {
 				out.printf("\nk%d %s", i,
 						doubleFormatter.format(newdatacollection.Alpha[i - 1]));
@@ -195,7 +196,7 @@ public class PrintDataAMPL extends PrintData {
 					doubleFormatter.format(maxUnavailability));
 			
 			out.printf("param Availability default %s :=",
-					doubleFormatter.format(newdatacollection.defaultvalues.availability));
+					doubleFormatter.format(DefaultDataCollection.availability));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i)
 				out.printf("\np%d %s", i,
 						doubleFormatter.format(newdatacollection.availabilities[i - 1]));

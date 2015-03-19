@@ -1,6 +1,6 @@
 package it.polimi.modaclouds.space4cloud.milp.xmlfiles;
 
-import it.polimi.modaclouds.qos_models.schema.IaasService;
+import it.polimi.modaclouds.qos_models.schema.CloudService;
 import it.polimi.modaclouds.qos_models.schema.Replica;
 import it.polimi.modaclouds.qos_models.schema.ReplicaElement;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
@@ -42,7 +42,7 @@ public class ParsResEnvExt {
 				String provider = rc.getProvider();
 				String tierId = rc.getId();
 				
-				IaasService resource = rc.getCloudResource();
+				CloudService resource = rc.getCloudElement();
 //				String serviceType = resource.getServiceType();
 //				String serviceName = resource.getServiceName();
 				String resourceName = resource.getResourceSizeID();

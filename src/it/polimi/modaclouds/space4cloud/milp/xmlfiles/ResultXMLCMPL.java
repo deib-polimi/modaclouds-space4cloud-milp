@@ -6,8 +6,8 @@ import it.polimi.modaclouds.space4cloud.milp.processing.Parser;
 import it.polimi.modaclouds.space4cloud.milp.types.SqlBaseParsMatrix;
 import it.polimi.modaclouds.space4cloud.milp.xmldatalists.RepositoryList;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class ResultXMLCMPL extends ResultXML {
@@ -38,29 +38,42 @@ public class ResultXMLCMPL extends ResultXML {
 			String OutputTime="";
 			String Objective="";
 			
-			BufferedReader br = new BufferedReader(new FileReader(LogFilePath));
-			String S = "";
-			int i;
-			while ((S = br.readLine()) != null) {
-				
-				if ((i = S.indexOf("Input =")) > -1)
-					InputTime = S.substring(i + "Input =".length()).trim();
-				else if ((i = S.indexOf("Output =")) > -1)
-					OutputTime = S.substring(i + "Output =".length()).trim();
-				else if ((i = S.indexOf("Solve =")) > -1) {
-					SolveTime = S.substring(i + "Solve =".length()).trim();
-					hassolution = true;
-				} /*else if ((i = S.indexOf("optimal integer solution; objective")) > -1)
-					Objective = S.substring(i + "optimal integer solution; objective".length()).trim();*/
-				else if ((i = S.indexOf("; objective")) > -1)
-					Objective = S.substring(i + "; objective".length()).trim();
-				else if (S.indexOf("infeasible problem") > -1)
-					isfeasible = false;
-				
-			}
-			br.close();
+			Scanner sc = new Scanner(new FileReader(LogFilePath));
 			
-			time = Math.round((Double.parseDouble(InputTime) + Double.parseDouble(SolveTime) + Double.parseDouble(OutputTime)) * 1000);
+			String timeModel = "CMPL: Time used for model generation: ";
+			String timeSol = "CMPL: Time used for solving the model: ";
+			String obj = "Objective value:";
+			String fail = "CMPL model generation - failed";
+			
+			boolean goOn = true;
+			
+			while (sc.hasNextLine() && goOn && (InputTime.length() == 0 || SolveTime.length() == 0 || Objective.length() == 0)) {
+				String line = sc.nextLine();
+				int i;
+				if ((i = line.indexOf(timeModel)) > -1) {
+					InputTime = line.substring(i + timeModel.length());
+					InputTime = InputTime.substring(0, InputTime.indexOf("seconds"));
+					InputTime.trim();
+				} else if ((i = line.indexOf(timeSol)) > -1) {
+					SolveTime = line.substring(i + timeSol.length());
+					SolveTime = SolveTime.substring(0, SolveTime.indexOf("seconds"));
+					SolveTime.trim();
+				} else if ((i = line.indexOf(obj)) > -1) {
+					Objective = line.substring(i + obj.length());
+					Objective.trim();
+					hassolution = true;
+					isfeasible = true;
+				} else if ((i = line.indexOf(fail)) > -1) {
+					hassolution = false;
+					isfeasible = false;
+					goOn = false;
+				}
+			}
+			sc.close();
+			
+			OutputTime = "0";
+			
+			time = Math.round((Double.parseDouble(InputTime) + Double.parseDouble(SolveTime) + Double.parseDouble(OutputTime))); // * 1000);
 			cost = Double.parseDouble(Objective);
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
@@ -83,48 +96,71 @@ public class ResultXMLCMPL extends ResultXML {
 		// container wrapperextension
 
 		try {
-			BufferedReader in_buf = new BufferedReader(new FileReader(
-					ResFilePath));
-			String S = in_buf.readLine();
-			while (!(S = in_buf.readLine()).equalsIgnoreCase(";")) {
+			Scanner sc = new Scanner(new FileReader(ResFilePath));
+			while (sc.hasNextLine()) {
+				String S = sc.nextLine();
 				
 				StringTokenizer st = new StringTokenizer(S, " ");
 				
-				if (st.countTokens() < 6) {
-					int tempCost;
-					if ((tempCost = S.indexOf("AmountVM[v,p,i,t] = ")) > -1)
-						cost = Double.parseDouble(S.substring(tempCost + "AmountVM[v,p,i,t] = ".length()));
-					
+				if (st.countTokens() != 6)
+					continue;
+				
+				String name = st.nextToken();
+				String var = name.substring(0, name.indexOf('['));
+				name = name.substring(name.indexOf('[') + 1, name.length() - 1);
+				String[] comps = name.split(",");
+				
+				String Amount = "-1";
+				String ArrivalRate = "-1";
+				
+				int v = -1, p = -1, i = -1, t = -1;
+				st.nextToken();
+				
+				for (String s : comps)
+					switch (s.charAt(0)) {
+					case 'v':
+						v = Integer.parseInt(s.substring(1)) - 1;
+						break;
+					case 'p':
+						p = Integer.parseInt(s.substring(1)) - 1;
+						break;
+					case 'i':
+						i = Integer.parseInt(s.substring(1)) - 1;
+						break;
+					case 't':
+						t = Integer.parseInt(s.substring(1));
+						break;
+					}
+				
+				if (var.equals("AmountVM")) {
+					Amount = st.nextToken();
+				} else if (var.equals("PartialArrRate")) {
+					ArrivalRate = st.nextToken();
+				} else {
 					continue;
 				}
 				
-				int p = Integer.parseInt(st.nextToken().substring(1)) - 1;
-				int t = Integer.parseInt(st.nextToken().substring(1));
-				int i = Integer.parseInt(st.nextToken().substring(1)) - 1;
-				int v = Integer.parseInt(st.nextToken().substring(1)) - 1;
-				String Amount = st.nextToken();
-				String ArrivalRate = st.nextToken();
-				
+				if (!ArrivalRate.equals("-1")) {
+					double Population = Double.parseDouble(ArrivalRate) * CDBList.thinkTimes[t - 1]; //10;
+					newWExtension.ExtensionsArray[p].population[t - 1] = (int) Math
+							.round(Population);
+					newWExtension.ExtensionsArray[p].ThinkTime[t - 1] = (int)CDBList.thinkTimes[t - 1]; //10;
+				}
+				if (!Amount.equals("-1")) {
+					// saving data in corresponding extension class
+					newWExtension.ExtensionsArray[p].ContainerId[i] = CRList.ContainerList.Id[i];
 
-				// saving data in corresponding extension class
-				newWExtension.ExtensionsArray[p].ContainerId[i] = CRList.ContainerList.Id[i];
-
-				newWExtension.ExtensionsArray[p].ServiceName[i] = newMatrix.ServiceName[p][v];
-				newWExtension.ExtensionsArray[p].ServiceType[i] = "Compute";
-				newWExtension.ExtensionsArray[p].VMtypeName[i] = newMatrix.TypeName[p][v];
-				
-				newWExtension.ExtensionsArray[p].Region[i] = newMatrix.Region[p][v];
-				
-				newWExtension.ExtensionsArray[p].ProviderName = CDBList.ProviderName[p];
-				newWExtension.ExtensionsArray[p].ShouldBePrinted = true;
-//					double Population = Double.parseDouble(ArrivalRate)
-//							* (10 + CRList.MaxSystemResponseTime);
-				double Population = Double.parseDouble(ArrivalRate) * CDBList.thinkTimes[t - 1]; //10;
-				newWExtension.ExtensionsArray[p].population[t - 1] = (int) Math
-						.round(Population);
-				newWExtension.ExtensionsArray[p].ThinkTime[t - 1] = (int)CDBList.thinkTimes[t - 1]; //10;
-
-				newWExtension.ExtensionsArray[p].replicas[i][t - 1] = Amount;
+					newWExtension.ExtensionsArray[p].ServiceName[i] = newMatrix.ServiceName[p][v];
+					newWExtension.ExtensionsArray[p].ServiceType[i] = "Compute";
+					newWExtension.ExtensionsArray[p].VMtypeName[i] = newMatrix.TypeName[p][v];
+					
+					newWExtension.ExtensionsArray[p].Region[i] = newMatrix.Region[p][v];
+					
+					newWExtension.ExtensionsArray[p].ProviderName = CDBList.ProviderName[p];
+					newWExtension.ExtensionsArray[p].ShouldBePrinted = true;
+					
+					newWExtension.ExtensionsArray[p].replicas[i][t - 1] = Amount;
+				}
 				// Prov=p;
 				
 			}
@@ -132,7 +168,7 @@ public class ResultXMLCMPL extends ResultXML {
 			if (ExportExtensions)
 				newWExtension.printExtensions();
 			
-			in_buf.close();
+			sc.close();
 
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
@@ -158,4 +194,5 @@ public class ResultXMLCMPL extends ResultXML {
 		newresultxml.printFile(newparser.newparsrepository.resRepositoryList,
 				newparser.newparssql.newDBList, newparser.newparssql.resMatrix);
 	}
+	
 }

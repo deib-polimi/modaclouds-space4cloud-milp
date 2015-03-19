@@ -107,8 +107,8 @@ public class Main {
 	}
 	
 	public static void mainConstellation(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "conference-opt-2p.properties";
+		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
+		String configuration  = basePath + "OptimizationMac.properties"; //"conference-opt-2p.properties";
 		
 		Solver.removeTempFiles = false;
 		

@@ -7,7 +7,7 @@ public abstract class Bash {
 	public abstract boolean print(String file);
 
 	public static void print() {
-		switch (Configuration.SOLVER) {
+		switch (Configuration.MATH_SOLVER) {
 		case AMPL:
 			BashAMPL.print();
 			break;

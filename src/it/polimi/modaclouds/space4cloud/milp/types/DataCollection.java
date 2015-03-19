@@ -40,9 +40,6 @@ public class DataCollection {
 	
 	public double[] availabilities = null;
 	
-	//container for default values of AMPL parameters
-	public DefaultDataCollection defaultvalues=null;
-	
 	//creates all arrays and sub-containers
 	public void initialization()
 	{
@@ -57,7 +54,5 @@ public class DataCollection {
 		Alpha=new double [CountClasses];
 		
 		availabilities = new double[CountProviders];
-		
-		defaultvalues=new DefaultDataCollection();
 	}
 }

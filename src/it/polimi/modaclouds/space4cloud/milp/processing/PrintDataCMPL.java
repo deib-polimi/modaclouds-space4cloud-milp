@@ -1,6 +1,7 @@
 package it.polimi.modaclouds.space4cloud.milp.processing;
 
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
+import it.polimi.modaclouds.space4cloud.milp.types.DefaultDataCollection;
 import it.polimi.modaclouds.space4cloud.milp.xmldatalists.SolutionList;
 
 import java.io.FileWriter;
@@ -23,142 +24,132 @@ public class PrintDataCMPL extends PrintData {
 
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(SaveFilePath));
-			out.print("set CONTAINER :=");
+			out.print("%CONTAINER set <");
 			for (int i = 1; i <= newdatacollection.CountContainers; ++i)
 				out.printf(" i%d", i);
-			out.println(";");
+			out.println(" >");
 
-			out.print("set PROVIDER :=");
+			out.print("%PROVIDER set <");
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i)
 				out.printf(" p%d", i);
-			out.println(";");
+			out.println(" >");
 
-			out.print("set CLASS_REQUEST :=");
+			out.print("%CLASS_REQUEST set <");
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				out.printf(" k%d", i);
-			out.println(";");
+			out.println(" >");
 
-			out.print("set TYPE_VM :=");
+			out.print("%TYPE_VM set <");
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				out.printf(" v%d", i);
-			out.println(";");
+			out.println(" >");
 
-			out.print("set TIME_INT :=");
+			out.print("%TIME_INT set <");
 			for (int i = 1; i <= newdatacollection.CountTimeInts; ++i)
 				out.printf(" t%d", i);
-			out.println(";");
+			out.println(" >");
 
-			out.print("set COMPONENT :=");
+			out.print("%COMPONENT set <");
 			for (int i = 1; i <= newdatacollection.CountComponents; ++i)
 				out.printf(" c%d", i);
-			out.println(";");
+			out.println(" >");
 
 			out.printf(
-					"param ProbabilityToBeInComponent default %s :=",
+					"%%ProbabilityToBeInComponent[CLASS_REQUEST, COMPONENT] default %s <",
 					doubleFormatter
-							.format(newdatacollection.defaultvalues.ProbabilityToBeInComponent));
+							.format(DefaultDataCollection.ProbabilityToBeInComponent));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf(
-							"\nk%d c%d %s",
-							i,
-							j,
+							" %s",
 							doubleFormatter
 									.format(newdatacollection.ProbabilityToBeInComponent[i - 1][j - 1]));
 				}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param ArrRate default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.ArrRate));
+			out.printf("%%ArrRate[TIME_INT] default %s <", doubleFormatter
+					.format(DefaultDataCollection.ArrRate));
 			for (int i = 1; i <= newdatacollection.CountTimeInts; ++i) {
-				out.printf("\nt%d %s", i, doubleFormatter
+				out.printf(" %s", doubleFormatter
 						.format(newdatacollection.ArrRate[i - 1]));
 			}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param MaximumSR default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.MaximumSR));
+			out.printf("%%MaximumSR[CLASS_REQUEST, COMPONENT] default %s <", doubleFormatter
+					.format(DefaultDataCollection.MaximumSR));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
-					out.printf("\nk%d c%d %s", i, j, doubleFormatter
+					out.printf(" %s", doubleFormatter
 							.format(newdatacollection.MaximumSR[i - 1][j - 1]));
 				}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param PartitionComponents default %d :=",
-					newdatacollection.defaultvalues.PartitionComponents);
+			out.printf("%%PartitionComponents[COMPONENT, CONTAINER] default %d <",
+					DefaultDataCollection.PartitionComponents);
 			for (int i = 1; i <= newdatacollection.CountComponents; ++i)
 				for (int j = 1; j <= newdatacollection.CountContainers; ++j) {
-					out.printf("\nc%d i%d %d", i, j,
+					out.printf(" %d", i, j,
 							newdatacollection.PartitionComponents[i - 1][j - 1]);
 				}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param Speed default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.Speed));
+			out.printf("%%Speed[TYPE_VM, PROVIDER, CONTAINER] default %s <", doubleFormatter
+					.format(DefaultDataCollection.Speed));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
 						out.printf(
-								"\nv%d p%d i%d %s",
-								i,
-								j,
-								k,
+								" %s",
 								doubleFormatter
 										.format(newdatacollection.Speed[i - 1][j - 1][k - 1]));
 					}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param Cost default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.Cost));
+			out.printf("%%Cost[TYPE_VM, PROVIDER, CONTAINER] default %s <", doubleFormatter
+					.format(DefaultDataCollection.Cost));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
 						out.printf(
-								"\nv%d p%d i%d %s",
-								i,
-								j,
-								k,
+								" %s",
 								doubleFormatter
 										.format(newdatacollection.Cost[i - 1][j - 1][k - 1]));
 					}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param MaxResponseTime default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.MaxResponseTime));
+			out.printf("%%MaxResponseTime[CLASS_REQUEST, COMPONENT] default %s <", doubleFormatter
+					.format(DefaultDataCollection.MaxResponseTime));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf(
-							"\nk%d c%d %s",
-							i,
-							j,
+							" %s",
 							doubleFormatter
 									.format(newdatacollection.MaxResponseTime[i - 1][j - 1]));
 				}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param MinProv := %d;\n", newdatacollection.MinProv);
+			out.printf("%%MinProv < %d >\n", newdatacollection.MinProv);
 
-			out.printf("param MaxVMPerContainer := %d;\n",
+			out.printf("%%MaxVMPerContainer < %d >\n",
 					newdatacollection.MaxVMPerContainer);
 
-			out.printf("param MinArrRate default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.MinArrRate));
+			out.printf("%%MinArrRate[PROVIDER] default %s <", doubleFormatter
+					.format(DefaultDataCollection.MinArrRate));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i) {
-				out.printf("\np%d %s", i, doubleFormatter
+				out.printf(" %s", doubleFormatter
 						.format(newdatacollection.MinArrRate[i - 1]));
 			}
-			out.println(";");
+			out.println(" >");
 
-			out.printf("param Alpha default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.Alpha));
+			out.printf("%%Alpha[CLASS_REQUEST] default %s <", doubleFormatter
+					.format(DefaultDataCollection.Alpha));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i) {
-				out.printf("\nk%d %s", i,
+				out.printf(" %s",
 						doubleFormatter.format(newdatacollection.Alpha[i - 1]));
 			}
-			out.println(";");
+			out.println(" >");
 
-			if (initialSolution != null) {
+			if (initialSolution != null) { // TODO: azzz
 				out.print("param AmountVM default 0 :=");
 
 				for (SolutionList.AmountVM i : initialSolution.amounts)
@@ -216,15 +207,15 @@ public class PrintDataCMPL extends PrintData {
 
 			double maxUnavailability = 1 - minAvailability;
 
-			out.printf("param MaxUnavailability := %s;\n",
+			out.printf("%%MaxUnavailability < %s >\n",
 					doubleFormatter.format(maxUnavailability));
 
-			out.printf("param Availability default %s :=", doubleFormatter
-					.format(newdatacollection.defaultvalues.availability));
+			out.printf("%%Availability[PROVIDER] default %s <", doubleFormatter
+					.format(DefaultDataCollection.availability));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i)
-				out.printf("\np%d %s", i, doubleFormatter
+				out.printf(" %s", doubleFormatter
 						.format(newdatacollection.availabilities[i - 1]));
-			out.println(";");
+			out.println(" >");
 
 			out.close();
 		} catch (IOException e) {
