@@ -13,3 +13,6 @@
 /data.cdat
 /model.cmpl
 /modelstartingsolution.cmpl
+/solution.log
+/solution.sol
+.DS_Store
