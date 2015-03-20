@@ -55,126 +55,127 @@ public class PrintDataCMPL extends PrintData {
 			out.println(" >");
 
 			out.printf(
-					"%%ProbabilityToBeInComponent[CLASS_REQUEST, COMPONENT] default %s <",
+					"%%ProbabilityToBeInComponent[CLASS_REQUEST,COMPONENT] = %s indices <",
 					doubleFormatter
 							.format(DefaultDataCollection.ProbabilityToBeInComponent));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf(
-							" %s",
+							"\nk%d c%d %s",
+							i, j,
 							doubleFormatter
 									.format(newdatacollection.ProbabilityToBeInComponent[i - 1][j - 1]));
 				}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%ArrRate[TIME_INT] default %s <", doubleFormatter
+			out.printf("%%ArrRate[TIME_INT] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.ArrRate));
 			for (int i = 1; i <= newdatacollection.CountTimeInts; ++i) {
-				out.printf(" %s", doubleFormatter
+				out.printf("\nt%d %s", i, doubleFormatter
 						.format(newdatacollection.ArrRate[i - 1]));
 			}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%MaximumSR[CLASS_REQUEST, COMPONENT] default %s <", doubleFormatter
+			out.printf("%%MaximumSR[CLASS_REQUEST,COMPONENT] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.MaximumSR));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
-					out.printf(" %s", doubleFormatter
+					out.printf("\nk%d c%d %s", i, j, doubleFormatter
 							.format(newdatacollection.MaximumSR[i - 1][j - 1]));
 				}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%PartitionComponents[COMPONENT, CONTAINER] default %d <",
+			out.printf("%%PartitionComponents[COMPONENT,CONTAINER] = %d indices <",
 					DefaultDataCollection.PartitionComponents);
 			for (int i = 1; i <= newdatacollection.CountComponents; ++i)
 				for (int j = 1; j <= newdatacollection.CountContainers; ++j) {
-					out.printf(" %d", i, j,
+					out.printf("\nc%d i%d %d", i, j,
 							newdatacollection.PartitionComponents[i - 1][j - 1]);
 				}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%Speed[TYPE_VM, PROVIDER, CONTAINER] default %s <", doubleFormatter
+			out.printf("%%Speed[TYPE_VM,PROVIDER,CONTAINER] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.Speed));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
 						out.printf(
-								" %s",
+								"\nv%d p%d i%d %s", i, j, k,
 								doubleFormatter
 										.format(newdatacollection.Speed[i - 1][j - 1][k - 1]));
 					}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%Cost[TYPE_VM, PROVIDER, CONTAINER] default %s <", doubleFormatter
+			out.printf("%%Cost[TYPE_VM,PROVIDER,CONTAINER] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.Cost));
 			for (int i = 1; i <= newdatacollection.CountTypeVMs; ++i)
 				for (int j = 1; j <= newdatacollection.CountProviders; ++j)
 					for (int k = 1; k <= newdatacollection.CountContainers; ++k) {
 						out.printf(
-								" %s",
+								"\nv%d p%d i%d %s", i, j, k,
 								doubleFormatter
 										.format(newdatacollection.Cost[i - 1][j - 1][k - 1]));
 					}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%MaxResponseTime[CLASS_REQUEST, COMPONENT] default %s <", doubleFormatter
+			out.printf("%%MaxResponseTime[CLASS_REQUEST,COMPONENT] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.MaxResponseTime));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i)
 				for (int j = 1; j <= newdatacollection.CountComponents; ++j) {
 					out.printf(
-							" %s",
+							"\nk%d c%d %s", i, j,
 							doubleFormatter
 									.format(newdatacollection.MaxResponseTime[i - 1][j - 1]));
 				}
-			out.println(" >");
+			out.println("\n>");
 
 			out.printf("%%MinProv < %d >\n", newdatacollection.MinProv);
 
 			out.printf("%%MaxVMPerContainer < %d >\n",
 					newdatacollection.MaxVMPerContainer);
 
-			out.printf("%%MinArrRate[PROVIDER] default %s <", doubleFormatter
+			out.printf("%%MinArrRate[PROVIDER] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.MinArrRate));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i) {
-				out.printf(" %s", doubleFormatter
+				out.printf("\np%d %s", i, doubleFormatter
 						.format(newdatacollection.MinArrRate[i - 1]));
 			}
-			out.println(" >");
+			out.println("\n>");
 
-			out.printf("%%Alpha[CLASS_REQUEST] default %s <", doubleFormatter
+			out.printf("%%Alpha[CLASS_REQUEST] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.Alpha));
 			for (int i = 1; i <= newdatacollection.CountClasses; ++i) {
-				out.printf(" %s",
+				out.printf("\nk%d %s", i,
 						doubleFormatter.format(newdatacollection.Alpha[i - 1]));
 			}
-			out.println(" >");
+			out.println("\n>");
 
 			if (initialSolution != null) { // TODO: azzz
-				out.print("param AmountVM default 0 :=");
+				out.print("%AmountVM[TYPE_VM,PROVIDER,CONTAINER,TIME_INT] = 0 indices <");
 
 				for (SolutionList.AmountVM i : initialSolution.amounts)
 					if (i.provider != -1)
 						out.printf("\nv%d p%d i%d t%d %d", i.resource,
 								i.provider, i.tier, i.hour, i.allocation);
 
-				out.println(";");
+				out.println("\n>");
 
-				out.print("param X default 0 :=");
+				out.print("%X[PROVIDER] = 0 indices <");
 
 				for (SolutionList.X i : initialSolution.xs)
 					if (i.provider != -1)
 						out.printf("\np%d %d", i.provider, i.taken);
 
-				out.println(";");
+				out.println("\n>");
 
-				out.print("param W default 0 :=");
+				out.print("%W[TYPE_VM,PROVIDER,CONTAINER] = 0 indices <");
 
 				for (SolutionList.W i : initialSolution.ws)
 					if (i.provider != -1)
 						out.printf("\nv%d p%d i%d %d", i.resource, i.provider,
 								i.tier, i.taken);
 
-				out.println(";");
+				out.println("\n>");
 
 			} else if (resEnvExt != null) {
 				// out.print("param AmountVM default 0 :=");
@@ -210,12 +211,12 @@ public class PrintDataCMPL extends PrintData {
 			out.printf("%%MaxUnavailability < %s >\n",
 					doubleFormatter.format(maxUnavailability));
 
-			out.printf("%%Availability[PROVIDER] default %s <", doubleFormatter
+			out.printf("%%Availability[PROVIDER] = %s indices <", doubleFormatter
 					.format(DefaultDataCollection.availability));
 			for (int i = 1; i <= newdatacollection.CountProviders; ++i)
-				out.printf(" %s", doubleFormatter
+				out.printf("\np%d %s", i, doubleFormatter
 						.format(newdatacollection.availabilities[i - 1]));
-			out.println(" >");
+			out.println("\n>");
 
 			out.close();
 		} catch (IOException e) {
