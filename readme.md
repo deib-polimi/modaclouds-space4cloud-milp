@@ -6,7 +6,7 @@ To use this tool, you can import it via maven adding this dependency:
 
 * Group Id: it.polimi.modaclouds.space4cloud
 * Artifact Id: milp
-* Version: 0.0.3-SNAPSHOT
+* Version: 0.1.0
 * Type: jar
 * Scope: compile.
 
