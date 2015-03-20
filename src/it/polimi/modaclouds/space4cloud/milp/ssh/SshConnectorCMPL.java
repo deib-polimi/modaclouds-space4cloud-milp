@@ -6,7 +6,7 @@ import it.polimi.modaclouds.space4cloud.milp.Solver;
 public class SshConnectorCMPL extends SshConnector {
 	
 	@Override
-	public void execute() {
+	public void execute() throws Exception {
 		exec(String.format("mkdir -p %s", Configuration.RUN_WORKING_DIRECTORY));
 		
 		sendFileToWorkingDir(Configuration.RUN_DATA_CMPL);
@@ -27,7 +27,7 @@ public class SshConnectorCMPL extends SshConnector {
 			exec(String.format("rm -rf %s", Configuration.RUN_WORKING_DIRECTORY));
 	}
 	
-	public static void run() {
+	public static void run() throws Exception {
 		SshConnectorCMPL ssh = new SshConnectorCMPL();
 		ssh.execute();
 	}

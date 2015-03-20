@@ -89,7 +89,11 @@ public class Solver {
 		
 		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
 		
-		new DataProcessing();
+		try {
+			new DataProcessing();
+		} catch (Exception e) {
+			throw new MILPException("Error when sending or receiving file or when executing the script.", e);
+		}
 		
 		if (removeTempFiles)
 			Configuration.deleteTempFiles();

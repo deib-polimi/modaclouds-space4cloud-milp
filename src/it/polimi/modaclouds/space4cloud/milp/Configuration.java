@@ -281,12 +281,14 @@ public class Configuration {
 		if(fileNotSpecifiedORNotExist(DB_CONNECTION_FILE))
 			errors.add("The database connection file has not been specified");
 
-		if(SSH_USER_NAME==null|| SSH_USER_NAME.isEmpty())
-			errors.add("The user name for SSH connection has to be provided to perform the initial solution generation");
-		if(SSH_PASSWORD==null|| SSH_PASSWORD.isEmpty())
-			errors.add("The password for SSH connection has to be provided to perform the initial solution generation");
 		if(SSH_HOST==null|| SSH_HOST.isEmpty())
 			errors.add("The host for SSH connection has to be provided to perform the initial solution generation");
+		else if (!Configuration.isRunningLocally()) {
+			if(SSH_USER_NAME==null|| SSH_USER_NAME.isEmpty())
+				errors.add("The user name for SSH connection has to be provided to perform the initial solution generation");
+			if(SSH_PASSWORD==null|| SSH_PASSWORD.isEmpty())
+				errors.add("The password for SSH connection has to be provided to perform the initial solution generation");
+		}
 
 		return errors;
 	}

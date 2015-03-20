@@ -37,12 +37,12 @@ public class DataProcessing {
 	public ResultXML newresultxml = null;
 
 	// constructor
-	public DataProcessing() {
+	public DataProcessing() throws Exception {
 		run();
 	}
 
 	// main execution function
-	public void run() {
+	public void run() throws Exception {
 		// constructor for PCM and SQL parser
 		// all parsing functions are called by it
 		newparser = new Parser();
