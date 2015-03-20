@@ -16,35 +16,35 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.ssh;
 
-import com.jcraft.jsch.*;
-
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
-import it.polimi.modaclouds.space4cloud.milp.ssh.ScpTo.MyUserInfo;
 
-import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import java.io.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 //this class is used to download files from AMPL server
 public class ScpFrom {
 
-	// login to AMPL server
-	public String ScpUserName;
-	// AMPL server's address
-	public String ScpHost;
-	// password for account on AMPL server
-	public String ScpPasswd;
-
-	// constructor
-	public ScpFrom() {
-		ScpUserName = Configuration.SSH_USER_NAME;
-		ScpHost = Configuration.SSH_HOST;
-		ScpPasswd = Configuration.SSH_PASSWORD;
-	}
-
 	// main execution function
 	// coping RFile on AMPL server in LFile on local machine
 	public void receivefile(String LFile, String RFile) {
+		
+		if (Configuration.isRunningLocally())
+			try {
+				localReceivefile(LFile, RFile);
+				return;
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		
 		FileOutputStream fos = null;
 		try {
 
@@ -54,34 +54,30 @@ public class ScpFrom {
 			// creating session with username, server's address and port (22 by
 			// default)
 			JSch jsch = new JSch();
-			Session session = jsch.getSession(ScpUserName, ScpHost, 22);
+			Session session = jsch.getSession(Configuration.SSH_USER_NAME, Configuration.SSH_HOST, 22);
+			session.setPassword(Configuration.SSH_PASSWORD);
 
-			// receiving user password if it was not collected before
-			if (ScpPasswd == "")
-				ScpPasswd = JOptionPane.showInputDialog("Enter password");
-			session.setPassword(ScpPasswd);
-
-			// this class sets visual forms for interactions with users
-			// required by implementation
-			UserInfo ui = new MyUserInfo() {
-				public void showMessage(String message) {
-					JOptionPane.showMessageDialog(null, message);
-				}
-
-				public boolean promptYesNo(String message) {
-					Object[] options = { "yes", "no" };
-					int foo = JOptionPane.showOptionDialog(null, message,
-							"Warning", JOptionPane.DEFAULT_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options,
-							options[0]);
-					return foo == 0;
-				}
-			};
+//			// this class sets visual forms for interactions with users
+//			// required by implementation
+//			UserInfo ui = new MyUserInfo() {
+//				public void showMessage(String message) {
+//					JOptionPane.showMessageDialog(null, message);
+//				}
+//
+//				public boolean promptYesNo(String message) {
+//					Object[] options = { "yes", "no" };
+//					int foo = JOptionPane.showOptionDialog(null, message,
+//							"Warning", JOptionPane.DEFAULT_OPTION,
+//							JOptionPane.WARNING_MESSAGE, null, options,
+//							options[0]);
+//					return foo == 0;
+//				}
+//			};
 			String prefix = null;
 			if (new File(lfile).isDirectory()) {
 				prefix = lfile + File.separator;
 			}
-			session.setUserInfo(ui);
+//			session.setUserInfo(ui);
 			// disabling of certificate checks
 			session.setConfig("StrictHostKeyChecking", "no");
 			session.connect();
@@ -194,4 +190,19 @@ public class ScpFrom {
 		}
 		return b;
 	}
+	
+	public void localReceivefile(String LFile, String RFile) throws FileNotFoundException {
+		if (!new File(RFile).exists())
+			throw new FileNotFoundException("File " + RFile + " not found!");
+		
+		ExecSSH ex = new ExecSSH();
+		
+		if (new File(LFile).exists() && new File(LFile).isDirectory() && !LFile.endsWith(File.separator))
+			LFile = LFile + File.separator;
+		
+		String command = String.format("cp %s %s", RFile, LFile);
+		ex.localExec(command);
+		
+	}
+	
 }

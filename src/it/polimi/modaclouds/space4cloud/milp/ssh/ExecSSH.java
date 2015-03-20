@@ -16,73 +16,53 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.ssh;
 
+import it.polimi.modaclouds.space4cloud.milp.Configuration;
+
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UserInfo;
-
-import it.polimi.modaclouds.space4cloud.milp.Configuration;
-import it.polimi.modaclouds.space4cloud.milp.ssh.ScpTo.MyUserInfo;
 
 //this class allows to execute commands on AMPL server
 public class ExecSSH {
 
-	// login to AMPL server
-	public String ScpUserName;
-	// AMPL server's address
-	public String ScpHost;
-	// password for account on AMPL server
-	public String ScpPasswd;
-	// directory on server with model (file model.mod)
-	public String UploadPath;
-
-	// constructor
-	public ExecSSH() {
-		ScpUserName = Configuration.SSH_USER_NAME;
-		ScpHost = Configuration.SSH_HOST;
-		ScpPasswd = Configuration.SSH_PASSWORD;
-		UploadPath = Configuration.RUN_WORKING_DIRECTORY;
-	}
-
 	// main execution function
 	// returns in List<Strings> all answers of the server
 	public List<String> mainExec(String command) {
+		if (Configuration.isRunningLocally())
+			return localExec(command);
+		
 		List<String> res = new ArrayList<String>();
 		try {
 			// creating session with username, server's address and port (22 by
 			// default)
 			JSch jsch = new JSch();
-			Session session = jsch.getSession(ScpUserName, ScpHost, 22);
+			Session session = jsch.getSession(Configuration.SSH_USER_NAME, Configuration.SSH_HOST, 22);
+			session.setPassword(Configuration.SSH_PASSWORD);
 
-			// receiving user password if it was not collected before
-			if (ScpPasswd == "")
-				ScpPasswd = JOptionPane.showInputDialog("Enter password");
-			session.setPassword(ScpPasswd);
-
-			// this class sets visual forms for interactions with users
-			// required by implementation
-			UserInfo ui = new MyUserInfo() {
-				public void showMessage(String message) {
-					JOptionPane.showMessageDialog(null, message);
-				}
-
-				public boolean promptYesNo(String message) {
-					Object[] options = { "yes", "no" };
-					int foo = JOptionPane.showOptionDialog(null, message,
-							"Warning", JOptionPane.DEFAULT_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options,
-							options[0]);
-					return foo == 0;
-				}
-			};
-			session.setUserInfo(ui);
+//			// this class sets visual forms for interactions with users
+//			// required by implementation
+//			UserInfo ui = new MyUserInfo() {
+//				public void showMessage(String message) {
+//					JOptionPane.showMessageDialog(null, message);
+//				}
+//
+//				public boolean promptYesNo(String message) {
+//					Object[] options = { "yes", "no" };
+//					int foo = JOptionPane.showOptionDialog(null, message,
+//							"Warning", JOptionPane.DEFAULT_OPTION,
+//							JOptionPane.WARNING_MESSAGE, null, options,
+//							options[0]);
+//					return foo == 0;
+//				}
+//			};
+//			session.setUserInfo(ui);
 
 			// disabling of certificate checks
 			session.setConfig("StrictHostKeyChecking", "no");
@@ -91,7 +71,7 @@ public class ExecSSH {
 
 			// creating channel in execution mod
 			Channel channel = session.openChannel("exec");
-			// sending command which runs bash-script in UploadPath directory
+			// sending command which runs bash-script in Configuration.RUN_WORKING_DIRECTORY directory
 			((ChannelExec) channel).setCommand(command);
 			// taking input stream
 			channel.setInputStream(null);
@@ -124,6 +104,25 @@ public class ExecSSH {
 			channel.disconnect();
 			session.disconnect();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public List<String> localExec(String command) {
+		List<String> res = new ArrayList<String>();
+		ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+		pb.redirectErrorStream(true);
+		try {
+			Process p = pb.start();
+			BufferedReader stream = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = stream.readLine(); 
+			while (line != null) {
+				res.add(line);
+				line = stream.readLine();
+			}
+			stream.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -294,5 +294,9 @@ public class Configuration {
 	private static boolean fileNotSpecifiedORNotExist(String filePath){
 		return filePath == null || filePath.isEmpty() || !Paths.get(filePath).toFile().exists();
 	}
+	
+	public static boolean isRunningLocally() {
+		return (SSH_HOST.equals("localhost") || SSH_HOST.equals("127.0.0.1"));
+	}
 }
 

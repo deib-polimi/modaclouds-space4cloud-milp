@@ -16,34 +16,35 @@
  */
 package it.polimi.modaclouds.space4cloud.milp.ssh;
 
-import com.jcraft.jsch.*;
-
 import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
-import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import java.io.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 //this class is used to upload files on AMPL server
 public class ScpTo {
 
-	// login to AMPL server
-	public String ScpUserName;
-	// AMPL server's address
-	public String ScpHost;
-	// password for account on AMPL server
-	public String ScpPasswd;
-
-	// constructor
-	public ScpTo() {
-		ScpUserName = Configuration.SSH_USER_NAME;
-		ScpHost = Configuration.SSH_HOST;
-		ScpPasswd = Configuration.SSH_PASSWORD;
-	}
-
 	// main execution function
 	// coping LFile on local machine in RFile on AMPL server
 	public void sendfile(String LFile, String RFile) {
+		
+		if (Configuration.isRunningLocally())
+			try {
+				localSendfile(LFile, RFile);
+				return;
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		
 		FileInputStream fis = null;
 		try {
 			String lfile = LFile;
@@ -52,30 +53,26 @@ public class ScpTo {
 			// creating session with username, server's address and port (22 by
 			// default)
 			JSch jsch = new JSch();
-			Session session = jsch.getSession(ScpUserName, ScpHost, 22);
+			Session session = jsch.getSession(Configuration.SSH_USER_NAME, Configuration.SSH_HOST, 22);
+			session.setPassword(Configuration.SSH_PASSWORD);
 
-			// receiving user password if it was not collected before
-			if (ScpPasswd == "")
-				ScpPasswd = JOptionPane.showInputDialog("Enter password");
-			session.setPassword(ScpPasswd);
-
-			// this class sets visual forms for interactions with users
-			// required by implementation
-			UserInfo ui = new MyUserInfo() {
-				public void showMessage(String message) {
-					JOptionPane.showMessageDialog(null, message);
-				}
-
-				public boolean promptYesNo(String message) {
-					Object[] options = { "yes", "no" };
-					int foo = JOptionPane.showOptionDialog(null, message,
-							"Warning", JOptionPane.DEFAULT_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options,
-							options[0]);
-					return foo == 0;
-				}
-			};
-			session.setUserInfo(ui);
+//			// this class sets visual forms for interactions with users
+//			// required by implementation
+//			UserInfo ui = new MyUserInfo() {
+//				public void showMessage(String message) {
+//					JOptionPane.showMessageDialog(null, message);
+//				}
+//
+//				public boolean promptYesNo(String message) {
+//					Object[] options = { "yes", "no" };
+//					int foo = JOptionPane.showOptionDialog(null, message,
+//							"Warning", JOptionPane.DEFAULT_OPTION,
+//							JOptionPane.WARNING_MESSAGE, null, options,
+//							options[0]);
+//					return foo == 0;
+//				}
+//			};
+//			session.setUserInfo(ui);
 
 			// disabling of certificate checks
 			session.setConfig("StrictHostKeyChecking", "no");
@@ -183,34 +180,49 @@ public class ScpTo {
 		return b;
 	}
 
-	public static abstract class MyUserInfo implements UserInfo,
-			UIKeyboardInteractive {
-		public String getPassword() {
-			return null;
-		}
-
-		public boolean promptYesNo(String str) {
-			return false;
-		}
-
-		public String getPassphrase() {
-			return null;
-		}
-
-		public boolean promptPassphrase(String message) {
-			return false;
-		}
-
-		public boolean promptPassword(String message) {
-			return false;
-		}
-
-		public void showMessage(String message) {
-		}
-
-		public String[] promptKeyboardInteractive(String destination,
-				String name, String instruction, String[] prompt, boolean[] echo) {
-			return null;
-		}
+//	public static abstract class MyUserInfo implements UserInfo,
+//			UIKeyboardInteractive {
+//		public String getPassword() {
+//			return null;
+//		}
+//
+//		public boolean promptYesNo(String str) {
+//			return false;
+//		}
+//
+//		public String getPassphrase() {
+//			return null;
+//		}
+//
+//		public boolean promptPassphrase(String message) {
+//			return false;
+//		}
+//
+//		public boolean promptPassword(String message) {
+//			return false;
+//		}
+//
+//		public void showMessage(String message) {
+//		}
+//
+//		public String[] promptKeyboardInteractive(String destination,
+//				String name, String instruction, String[] prompt, boolean[] echo) {
+//			return null;
+//		}
+//	}
+	
+	public void localSendfile(String LFile, String RFile) throws FileNotFoundException {
+		if (!new File(LFile).exists())
+			throw new FileNotFoundException("File " + LFile + " not found!");
+		
+		ExecSSH ex = new ExecSSH();
+		
+		if (new File(RFile).exists() && new File(RFile).isDirectory() && !RFile.endsWith(File.separator))
+			RFile = RFile + File.separator;
+		
+		String command = String.format("cp %s %s", LFile, RFile);
+		ex.localExec(command);
+		
 	}
+	
 }
