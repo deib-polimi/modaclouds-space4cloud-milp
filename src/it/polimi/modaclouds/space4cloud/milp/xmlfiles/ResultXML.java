@@ -285,6 +285,7 @@ public abstract class ResultXML {
 		writeFile(rme);
 	}
 
+	@Deprecated
 	protected void writeSolution(WrapperExtension newWExtension, double cost, long time) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
