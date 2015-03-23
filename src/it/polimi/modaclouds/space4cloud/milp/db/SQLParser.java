@@ -27,8 +27,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //class for interaction with database
 public class SQLParser {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SQLParser.class);
 
 	// amount of providers
 	public int countproviders = 0;
@@ -64,16 +69,12 @@ public class SQLParser {
 	private ArrayList<String> allowedProviders = null;
 	private ArrayList<String> allowedRegions = null;
 	
-	public SQLParser() {
+	public SQLParser() throws Exception {
 		allowedProviders = Configuration.AllowedProviders;
 		allowedRegions = Configuration.AllowedRegions;
 		
-		try {
-			FileInputStream fis = new FileInputStream(Configuration.DB_CONNECTION_FILE);
-			DatabaseConnector.initConnection(fis);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		FileInputStream fis = new FileInputStream(Configuration.DB_CONNECTION_FILE);
+		DatabaseConnector.initConnection(fis);
 		
 		parseit();
 	}
@@ -96,7 +97,7 @@ public class SQLParser {
 			if (st != null)
 				st.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Error while dealing with the database.", e);
 		}
 		return res;
 	}
@@ -303,7 +304,7 @@ public class SQLParser {
 				IndexTypeOfProvider[j]++;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Error while dealing with the database.", e);
 		}
 
 		return 0;

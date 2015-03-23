@@ -61,12 +61,12 @@ public class Parser {
 //	public ParsAddInf newaddinf = null;
 
 	// constructor
-	public Parser() {
+	public Parser() throws Exception {
 		run();
 	}
 
 	// main execution function
-	public void run() {
+	public void run() throws Exception {
 		// parsing SQL database
 //		newparssql = new sqlparser(Configuration.SqlDBname,
 //				Configuration.DBUserName, Configuration.DBPassword);

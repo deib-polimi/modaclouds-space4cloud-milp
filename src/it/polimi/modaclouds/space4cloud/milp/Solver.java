@@ -114,14 +114,9 @@ public class Solver {
 	
 	public static boolean removeTempFiles = true;
 	
-	public File getResourceModelExt() {
+	public File getResourceModelExt() throws MILPException {
 		if (resourceModelExt == null)
-			try {
-				compute();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			compute();
 		
 		if (resourceModelExt.exists())
 			return resourceModelExt;
@@ -130,14 +125,9 @@ public class Solver {
 		return null;
 	}
 	
-	public File getSolution() {
+	public File getSolution() throws MILPException {
 		if (solution == null)
-			try {
-				compute();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			compute();
 		
 		if (solution.exists())
 			return solution;
@@ -146,14 +136,9 @@ public class Solver {
 		return null;
 	}
 	
-	public File getMultiCloudExt() {
+	public File getMultiCloudExt() throws MILPException {
 		if (multiCloudExt == null)
-			try {
-				compute();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			compute();
 		
 		if (multiCloudExt.exists())
 			return multiCloudExt;

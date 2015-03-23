@@ -18,118 +18,65 @@ package it.polimi.modaclouds.space4cloud.milp;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main {
 	
-	public static void mainInitialSolution(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-optimization-1p.properties";
-//		String solution       = basePath + "initial-solution-amazon.xml";
-		String solution       = basePath + "initial-solution-amazon-broken.xml";
+	private static final Logger logger = LoggerFactory.getLogger(Main.class);
+	
+	public static void doMain(String configuration, String solution, String[] providers) {
+		if (configuration == null || !new File(configuration).exists())
+			return;
 		
 		Solver.removeTempFiles = false;
 		
-		Solver s = new Solver(configuration, solution);
+		Solver s = null;
 		
-		File resourceEnvExtFile = s.getResourceModelExt();
-		File initialSolution = s.getSolution();
-		File initialMce = s.getMultiCloudExt();
-
-		System.out.println("Generated resource model extension: "
-				+ resourceEnvExtFile.getAbsolutePath());
-		System.out.println("Generated solution: "
-				+ initialSolution.getAbsolutePath());
-		System.out.println("Generated multi cloud extension: "
-				+ initialMce.getAbsolutePath());
+		if (solution != null)
+			s = new Solver(configuration, solution);
+		else
+			s = new Solver(configuration);
+		
+		if (providers.length > 0)
+			s.setProviders(providers);
+		
+		try {
+			File resourceEnvExtFile = s.getResourceModelExt();
+			File initialSolution = s.getSolution();
+			File initialMce = s.getMultiCloudExt();
+	
+			logger.debug("Generated resource model extension: "
+					+ resourceEnvExtFile.getAbsolutePath());
+			logger.debug("Generated solution: "
+					+ initialSolution.getAbsolutePath());
+			logger.debug("Generated multi cloud extension: "
+					+ initialMce.getAbsolutePath());
+		} catch (Exception e) {
+			logger.error("Error while computing the solution!", e);
+		}
+	}
+	
+	public static void mainInitialSolution(String[] args) {
+		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
+		String configuration  = basePath + "OptimizationMacLocal.properties"; //"conference-opt-2p.properties";
+		String solution       = basePath + "ContainerExtensions/Computed/Solution-Conference-Amazon.xml";
+		
+		doMain(configuration, solution, new String[] {});
 	}
 	
 	public static void mainStandard(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-optimization-1p.properties";
-		
-		Solver.removeTempFiles = false;
-		
-		Solver s = new Solver(configuration);
-		
-		s.setProviders("Amazon"); //, "Microsoft");
-		
-		File resourceEnvExtFile = s.getResourceModelExt();
-		File initialSolution = s.getSolution();
-		File initialMce = s.getMultiCloudExt();
-
-		System.out.println("Generated resource model extension: "
-				+ resourceEnvExtFile.getAbsolutePath());
-		System.out.println("Generated solution: "
-				+ initialSolution.getAbsolutePath());
-		System.out.println("Generated multi cloud extension: "
-				+ initialMce.getAbsolutePath());
-	}
-	
-	public static void mainAll(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-optimization-1p.properties";
-		
-		Solver.removeTempFiles = false;
-		
-		Solver s = new Solver(configuration);
-		
-		File resourceEnvExtFile = s.getResourceModelExt();
-		File initialSolution = s.getSolution();
-		File initialMce = s.getMultiCloudExt();
-
-		System.out.println("Generated resource model extension: "
-				+ resourceEnvExtFile.getAbsolutePath());
-		System.out.println("Generated solution: "
-				+ initialSolution.getAbsolutePath());
-		System.out.println("Generated multi cloud extension: "
-				+ initialMce.getAbsolutePath());
-	}
-	
-	public static void mainBOC(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\BOC\\";
-		String configuration  = basePath + "conf-optimization.properties";
-		
-		Solver.removeTempFiles = false;
-		
-		Solver s = new Solver(configuration);
-		
-		s.setProviders("CloudSigma"); //, "Microsoft");
-		
-		File resourceEnvExtFile = s.getResourceModelExt();
-		File initialSolution = s.getSolution();
-		File initialMce = s.getMultiCloudExt();
-
-		System.out.println("Generated resource model extension: "
-				+ resourceEnvExtFile.getAbsolutePath());
-		System.out.println("Generated solution: "
-				+ initialSolution.getAbsolutePath());
-		System.out.println("Generated multi cloud extension: "
-				+ initialMce.getAbsolutePath());
-	}
-	
-	public static void mainConstellation(String[] args) {
 		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "OptimizationMac.properties"; //"conference-opt-2p.properties";
+		String configuration  = basePath + "OptimizationMacLocal.properties"; //"conference-opt-2p.properties";
 		
-		Solver.removeTempFiles = false;
+//		String[] providers = {"CloudSigma"}; // , "Microsoft"};
 		
-		Solver s = new Solver(configuration);
+		doMain(configuration, null, new String[] {}); //, providers);
 		
-//		s.setProviders("CloudSigma"); //, "Microsoft");
-		
-		File resourceEnvExtFile = s.getResourceModelExt();
-		File initialSolution = s.getSolution();
-		File initialMce = s.getMultiCloudExt();
-
-		System.out.println("Generated resource model extension: "
-				+ resourceEnvExtFile.getAbsolutePath());
-		System.out.println("Generated solution: "
-				+ initialSolution.getAbsolutePath());
-		System.out.println("Generated multi cloud extension: "
-				+ initialMce.getAbsolutePath());
 	}
 	
 	public static void main(String[] args) {
-		mainConstellation(args);
+		mainInitialSolution(args);
 	}
 
 }
