@@ -26,8 +26,10 @@ public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void doMain(String configuration, String solution, String[] providers) {
-		if (configuration == null || !new File(configuration).exists())
+		if (configuration == null || !new File(configuration).exists()) {
+			logger.error("The configuration file doesn't exist! Exiting...");
 			return;
+		}
 		
 		Solver.removeTempFiles = false;
 		
