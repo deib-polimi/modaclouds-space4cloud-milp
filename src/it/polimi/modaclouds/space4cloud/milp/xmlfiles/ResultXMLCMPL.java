@@ -74,15 +74,16 @@ public class ResultXMLCMPL extends ResultXML {
 			OutputTime = "0";
 			
 			time = Math.round((Double.parseDouble(InputTime) + Double.parseDouble(SolveTime) + Double.parseDouble(OutputTime))); // * 1000);
-			cost = Double.parseDouble(Objective);
+			if (hassolution)
+				cost = Double.parseDouble(Objective);
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			time = 0L;
 			cost = 0.0;
 		}
 
-		// if no solution, then print it ("No Solution!") and ends.
-		if (!hassolution || !isfeasible) {
+		// if not feasible, then print it ("No Solution!") and ends.
+		if (!isfeasible) {
 			noResult();
 			return 1;
 		}

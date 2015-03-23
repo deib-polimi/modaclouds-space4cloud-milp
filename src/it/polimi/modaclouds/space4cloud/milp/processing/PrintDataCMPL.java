@@ -151,7 +151,7 @@ public class PrintDataCMPL extends PrintData {
 			out.println("\n>");
 
 			if (initialSolution != null) { // TODO: azzz
-				out.print("%AmountVM[TYPE_VM,PROVIDER,CONTAINER,TIME_INT] = 0 indices <");
+				out.print("%ParamAmountVM[TYPE_VM,PROVIDER,CONTAINER,TIME_INT] = 0 indices <");
 
 				for (SolutionList.AmountVM i : initialSolution.amounts)
 					if (i.provider != -1)
