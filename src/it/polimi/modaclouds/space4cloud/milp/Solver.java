@@ -52,9 +52,6 @@ public class Solver {
 			throw new MILPException("Error while loading the configuration file!", e);
 		}
 		
-		if (Configuration.usesPaaS())
-			throw new MILPException("PaaS not supported at the moment!");
-		
 		setStartingResEnvExt();
 		if (initialSolution != null && Files.exists(Paths.get(initialSolution)))
 			setStartingSolution(Paths.get(initialSolution).toFile());
