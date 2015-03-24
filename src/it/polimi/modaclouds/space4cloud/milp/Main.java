@@ -33,17 +33,17 @@ public class Main {
 		
 		Solver.removeTempFiles = false;
 		
-		Solver s = null;
-		
-		if (solution != null)
-			s = new Solver(configuration, solution);
-		else
-			s = new Solver(configuration);
-		
-		if (providers.length > 0)
-			s.setProviders(providers);
-		
 		try {
+			Solver s = null;
+			
+			if (solution != null)
+				s = new Solver(configuration, solution);
+			else
+				s = new Solver(configuration);
+			
+			if (providers.length > 0)
+				s.setProviders(providers);
+			
 			File resourceEnvExtFile = s.getResourceModelExt();
 			File initialSolution = s.getSolution();
 			File initialMce = s.getMultiCloudExt();

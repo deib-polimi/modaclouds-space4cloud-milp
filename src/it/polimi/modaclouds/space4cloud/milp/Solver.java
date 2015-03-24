@@ -19,6 +19,7 @@ package it.polimi.modaclouds.space4cloud.milp;
 import it.polimi.modaclouds.space4cloud.milp.processing.DataProcessing;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsResEnvExt;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ParsSolution;
+import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ResultXML;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,26 +30,34 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Solver {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Solver.class);
 	
 	private File resourceModelExt = null;
 	private File solution = null;
 	private File multiCloudExt = null;
 	
-	public Solver(String configurationFile) {
+	public Solver(String configurationFile) throws MILPException {
 		this(configurationFile, null);
 	}
 	
-	public Solver(String configurationFile, String initialSolution) {
+	public Solver(String configurationFile, String initialSolution) throws MILPException {
 		try {
 			Configuration.loadConfiguration(configurationFile);
-			
-			setStartingResEnvExt();
-			if (initialSolution != null && Files.exists(Paths.get(initialSolution)))
-				setStartingSolution(Paths.get(initialSolution).toFile());
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new MILPException("Error while loading the configuration file!", e);
 		}
+		
+		if (Configuration.usesPaaS())
+			throw new MILPException("PaaS not supported at the moment!");
+		
+		setStartingResEnvExt();
+		if (initialSolution != null && Files.exists(Paths.get(initialSolution)))
+			setStartingSolution(Paths.get(initialSolution).toFile());
 	}
 	
 	public static String getDate() {
@@ -67,32 +76,37 @@ public class Solver {
 	}
 	
 	public void compute() throws MILPException {
-		List<String> errors = Configuration.checkValidity(); 
-		if (errors.size() == 1)
-			throw new MILPException("There is 1 problem with the configuration:\n- " + errors.get(0)); 
-		else if (errors.size() > 1) {
-			String message = "There are " + errors.size() + " problems with the configuration:";
-			for (String s : errors)
-				message += "\n- " + s;
-			throw new MILPException(message);
-		}
-		
-		try {
-			Files.createDirectories(Paths.get(
-					Configuration.PROJECT_BASE_FOLDER,
-					Configuration.WORKING_DIRECTORY));
-		} catch (IOException e) {
-			throw new MILPException("Error with dealing with the output folder: " + Paths.get(
-					Configuration.PROJECT_BASE_FOLDER,
-					Configuration.WORKING_DIRECTORY).toString());
-		}
-		
-		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
-		
-		try {
-			new DataProcessing();
-		} catch (Exception e) {
-			throw new MILPException("Error when sending or receiving file or when executing the script.", e);
+		if (Configuration.usesPaaS()) {
+			logger.error("PaaS not supported at the moment.");
+			ResultXML.printEmpty();
+		} else {
+			List<String> errors = Configuration.checkValidity(); 
+			if (errors.size() == 1)
+				throw new MILPException("There is 1 problem with the configuration:\n- " + errors.get(0)); 
+			else if (errors.size() > 1) {
+				String message = "There are " + errors.size() + " problems with the configuration:";
+				for (String s : errors)
+					message += "\n- " + s;
+				throw new MILPException(message);
+			}
+			
+			try {
+				Files.createDirectories(Paths.get(
+						Configuration.PROJECT_BASE_FOLDER,
+						Configuration.WORKING_DIRECTORY));
+			} catch (IOException e) {
+				throw new MILPException("Error with dealing with the output folder: " + Paths.get(
+						Configuration.PROJECT_BASE_FOLDER,
+						Configuration.WORKING_DIRECTORY).toString());
+			}
+			
+			Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
+			
+			try {
+				new DataProcessing();
+			} catch (Exception e) {
+				throw new MILPException("Error when sending or receiving file or when executing the script.", e);
+			}
 		}
 		
 		if (removeTempFiles)

@@ -389,5 +389,17 @@ public abstract class ResultXML {
 		}
 		
 	}
+	
+	public static void printEmpty() {
+		switch (Configuration.MATH_SOLVER) {
+		case AMPL:
+			new ResultXMLAMPL().noResult();
+			break;
+		case CMPL:
+			new ResultXMLCMPL().noResult();
+			break;
+		}
+		
+	}
 
 }
