@@ -97,7 +97,7 @@ public class Solver {
 						Configuration.WORKING_DIRECTORY).toString());
 			}
 			
-			Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
+			Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + Configuration.DEFAULTS_WORKING_DIRECTORY_SUFFIX + "/" + getDate();
 			
 			try {
 				new DataProcessing();

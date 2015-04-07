@@ -41,8 +41,9 @@ public class Configuration {
 	public static String PALLADIO_SYSTEM_MODEL;		//Path to System Diagram
 	
 	// Information used in the AMPL.run file
-	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c/milp"; //upload directory on AMPL server
-	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
+	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c"; //upload directory on AMPL server
+	public static final String DEFAULTS_WORKING_DIRECTORY_SUFFIX = "/milp";
+	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY + DEFAULTS_WORKING_DIRECTORY_SUFFIX;
 	public static final String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
 	public static final String RUN_MODEL_STANDARD = "model.mod";
 	public static final String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
@@ -169,6 +170,8 @@ public class Configuration {
 		prop.put("CMPL_THREADS", CMPL_THREADS);
 		
 		prop.put("MATH_SOLVER", MATH_SOLVER.getName());
+		
+		prop.put("DEFAULTS_WORKING_DIRECTORY", DEFAULTS_WORKING_DIRECTORY);
 	}
 
 	public static void saveConfiguration(String filePath) throws IOException{
@@ -190,7 +193,7 @@ public class Configuration {
 		prop.put("SSH_USER_NAME", SSH_USER_NAME);
 		prop.put("SSH_PASSWORD", SSH_PASSWORD);
 		
-		prop.put("RUN_WORKING_DIRECTORY", RUN_WORKING_DIRECTORY);
+		prop.put("DEFAULTS_WORKING_DIRECTORY", DEFAULTS_WORKING_DIRECTORY);
 		
 		prop.put("RUN_SOLVER", RUN_SOLVER);
 		prop.put("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
@@ -224,7 +227,7 @@ public class Configuration {
 		SSH_USER_NAME = prop.getProperty("SSH_USER_NAME", SSH_USER_NAME);
 		SSH_HOST = prop.getProperty("SSH_HOST", SSH_HOST);
 		
-		RUN_WORKING_DIRECTORY = prop.getProperty("RUN_WORKING_DIRECTORY", RUN_WORKING_DIRECTORY);
+		DEFAULTS_WORKING_DIRECTORY = prop.getProperty("DEFAULTS_WORKING_DIRECTORY", DEFAULTS_WORKING_DIRECTORY);
 		RUN_SOLVER = prop.getProperty("RUN_SOLVER", RUN_SOLVER);
 		RUN_AMPL_FOLDER = prop.getProperty("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
 		
