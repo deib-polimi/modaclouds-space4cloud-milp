@@ -43,25 +43,25 @@ public class Configuration {
 	// Information used in the AMPL.run file
 	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c/milp"; //upload directory on AMPL server
 	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
-	public static String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
-	public static String RUN_MODEL_STANDARD = "model.mod";
-	public static String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
-	public static String RUN_DATA = "data.dat"; //sets where temp AMPL file data.dat will be saved 
+	public static final String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
+	public static final String RUN_MODEL_STANDARD = "model.mod";
+	public static final String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
+	public static final String RUN_DATA = "data.dat"; //sets where temp AMPL file data.dat will be saved 
 	public static String RUN_SOLVER = "/usr/optimization/cplex-studio/cplex/bin/x86-64_linux/cplexamp";
 	public static String RUN_AMPL_FOLDER = "/usr/optimization/ampl";
-	public static String RUN_LOG = "solution.log"; //"log.tmp";//sets where temp AMPL file log.tmp will be saved 
-	public static String RUN_RES = "solution.sol"; //"shortrez.out";//sets where temp AMPL file shortrez.out will be saved
-	public static String DEFAULTS_BASH = "bashAMPL.run";
+	public static final String RUN_LOG = "solution.log"; //"log.tmp";//sets where temp AMPL file log.tmp will be saved 
+	public static final String RUN_RES = "solution.sol"; //"shortrez.out";//sets where temp AMPL file shortrez.out will be saved
+	public static final String DEFAULTS_BASH = "bashAMPL.run";
 	
-	public static String RUN_FILE_CMPL = "CMPL.run";
-	public static String RUN_MODEL_STANDARD_CMPL = "model.cmpl";
-	public static String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.cmpl";
-	public static String RUN_DATA_CMPL = "data.cdat";
+	public static final String RUN_FILE_CMPL = "CMPL.run";
+	public static final String RUN_MODEL_STANDARD_CMPL = "model.cmpl";
+	public static final String RUN_MODEL_STARTING_SOLUTION_CMPL = "modelstartingsolution.cmpl";
 	public static String RUN_SOLVER_CMPL = "cbc"; // glpk, cbc, scip, gurobi, cplex
+	public static final String RUN_DATA_CMPL = "data.cdat";
 	public static String RUN_CMPL_FOLDER = "/usr/share/Cmpl";
-	public static String RUN_LOG_CMPL = "solution.log"; 
-	public static String RUN_RES_CMPL = "solution.sol";
-	public static String DEFAULTS_BASH_CMPL = "bashCMPL.run";
+	public static final String RUN_LOG_CMPL = "solution.log"; 
+	public static final String RUN_RES_CMPL = "solution.sol";
+	public static final String DEFAULTS_BASH_CMPL = "bashCMPL.run";
 	public static int CMPL_THREADS = 4;
 	
 	public static Solver MATH_SOLVER = Solver.CMPL;
@@ -119,10 +119,10 @@ public class Configuration {
 	
 	public static String FilePathStartingSolution = null;
 	
-	public static String GENERATED_RESOURCE_MODEL_EXT = "generated-rme.xml";
-	public static String GENERATED_MULTI_CLOUD_EXT = "generated-mce.xml";
-	public static String GENERATED_SOLUTION = "generated-solution.xml";
-	public static String GENERATED_ADDINF = "generated-addinf.xml";
+	public static final String GENERATED_RESOURCE_MODEL_EXT = "generated-rme.xml";
+	public static final String GENERATED_MULTI_CLOUD_EXT = "generated-mce.xml";
+	public static final String GENERATED_SOLUTION = "generated-solution.xml";
+	public static final String GENERATED_ADDINF = "generated-addinf.xml";
 	
 	public static enum Solver {
 		AMPL("AMPL"), CMPL("CMPL");
@@ -159,6 +159,17 @@ public class Configuration {
 		}
 
 	}
+	
+	public static void addToConfiguration(Properties prop) throws IOException {
+		prop.put("RUN_SOLVER", RUN_SOLVER);
+		prop.put("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
+		
+		prop.put("RUN_SOLVER_CMPL", RUN_SOLVER);
+		prop.put("RUN_CMPL_FOLDER", RUN_CMPL_FOLDER);
+		prop.put("CMPL_THREADS", CMPL_THREADS);
+		
+		prop.put("MATH_SOLVER", MATH_SOLVER.getName());
+	}
 
 	public static void saveConfiguration(String filePath) throws IOException{
 		FileOutputStream fos = new FileOutputStream(filePath);
@@ -180,28 +191,13 @@ public class Configuration {
 		prop.put("SSH_PASSWORD", SSH_PASSWORD);
 		
 		prop.put("RUN_WORKING_DIRECTORY", RUN_WORKING_DIRECTORY);
-		prop.put("RUN_MODEL_STANDARD", RUN_MODEL_STANDARD);
-		prop.put("RUN_MODEL_STARTING_SOLUTION", RUN_MODEL_STARTING_SOLUTION);
-		prop.put("RUN_DATA", RUN_DATA);
+		
 		prop.put("RUN_SOLVER", RUN_SOLVER);
 		prop.put("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
-		prop.put("RUN_FILE", RUN_FILE);
-		prop.put("RUN_LOG", RUN_LOG);
-		prop.put("RUN_RES", RUN_RES);
 		
-		prop.put("RUN_MODEL_STANDARD_CMPL", RUN_MODEL_STANDARD_CMPL);
-		prop.put("RUN_MODEL_STARTING_SOLUTION_CMPL", RUN_MODEL_STARTING_SOLUTION_CMPL);
-		prop.put("RUN_DATA_CMPL", RUN_DATA_CMPL);
 		prop.put("RUN_SOLVER_CMPL", RUN_SOLVER);
 		prop.put("RUN_CMPL_FOLDER", RUN_CMPL_FOLDER);
-		prop.put("RUN_FILE_CMPL", RUN_FILE_CMPL);
-		prop.put("RUN_LOG_CMPL", RUN_LOG_CMPL);
-		prop.put("RUN_RES_CMPL", RUN_RES_CMPL);
 		prop.put("CMPL_THREADS", CMPL_THREADS);
-		
-		prop.put("DEFAULTS_BASH", DEFAULTS_BASH);
-		
-		prop.put("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
 		
 		prop.put("MATH_SOLVER", MATH_SOLVER.getName());
 		
@@ -229,30 +225,14 @@ public class Configuration {
 		SSH_HOST = prop.getProperty("SSH_HOST", SSH_HOST);
 		
 		RUN_WORKING_DIRECTORY = prop.getProperty("RUN_WORKING_DIRECTORY", RUN_WORKING_DIRECTORY);
-		RUN_MODEL_STANDARD = prop.getProperty("RUN_MODEL_STANDARD", RUN_MODEL_STANDARD);
-		RUN_MODEL_STARTING_SOLUTION = prop.getProperty("RUN_MODEL_STARTING_SOLUTION", RUN_MODEL_STARTING_SOLUTION);
-		RUN_DATA = prop.getProperty("RUN_DATA", RUN_DATA);
 		RUN_SOLVER = prop.getProperty("RUN_SOLVER", RUN_SOLVER);
 		RUN_AMPL_FOLDER = prop.getProperty("RUN_AMPL_FOLDER", RUN_AMPL_FOLDER);
-		RUN_FILE = prop.getProperty("RUN_FILE", RUN_FILE);
-		RUN_LOG = prop.getProperty("RUN_LOG", RUN_LOG);
-		RUN_RES = prop.getProperty("RUN_RES", RUN_RES);
 		
-		RUN_MODEL_STANDARD_CMPL = prop.getProperty("RUN_MODEL_STANDARD_CMPL", RUN_MODEL_STANDARD_CMPL);
-		RUN_MODEL_STARTING_SOLUTION_CMPL = prop.getProperty("RUN_MODEL_STARTING_SOLUTION_CMPL", RUN_MODEL_STARTING_SOLUTION_CMPL);
-		RUN_DATA_CMPL = prop.getProperty("RUN_DATA_CMPL", RUN_DATA_CMPL);
 		RUN_SOLVER_CMPL = prop.getProperty("RUN_SOLVER_CMPL", RUN_SOLVER_CMPL);
 		RUN_CMPL_FOLDER = prop.getProperty("RUN_CMPL_FOLDER", RUN_CMPL_FOLDER);
-		RUN_FILE_CMPL = prop.getProperty("RUN_FILE_CMPL", RUN_FILE_CMPL);
-		RUN_LOG_CMPL = prop.getProperty("RUN_LOG_CMPL", RUN_LOG_CMPL);
-		RUN_RES_CMPL = prop.getProperty("RUN_RES_CMPL", RUN_RES_CMPL);
 		try {
 			CMPL_THREADS = Integer.parseInt(prop.getProperty("CMPL_THREADS", String.valueOf(CMPL_THREADS)));
 		} catch (Exception e) { }
-		
-		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
-		
-		DEFAULTS_BASH_CMPL = prop.getProperty("DEFAULTS_BASH_CMPL", DEFAULTS_BASH_CMPL);
 		
 		MATH_SOLVER = Solver.getByName(prop.getProperty("MATH_SOLVER", MATH_SOLVER.getName()));
 	}
