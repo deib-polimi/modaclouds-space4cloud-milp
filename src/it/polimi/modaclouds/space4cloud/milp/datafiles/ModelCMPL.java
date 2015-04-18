@@ -20,7 +20,7 @@ public class ModelCMPL extends Model {
 			
 			String baseFile = "";
 			
-			Scanner sc = new Scanner(this.getClass().getResourceAsStream("/" + origFile));
+			Scanner sc = new Scanner(Configuration.getStream(origFile));
 			
 			while (sc.hasNextLine())
 				baseFile += sc.nextLine() + "\n";

@@ -19,7 +19,7 @@ public class FileRunCMPL extends FileRun {
 			
 //			String baseFile = new String(Files.readAllBytes(Paths.get(this.getClass().getResource(Configuration.RUN_FILE).toURI())));
 			
-			Scanner sc = new Scanner(this.getClass().getResourceAsStream("/" + Configuration.RUN_FILE_CMPL));
+			Scanner sc = new Scanner(Configuration.getStream(Configuration.RUN_FILE_CMPL));
 			
 			while (sc.hasNextLine())
 				baseFile += sc.nextLine() + "\n";

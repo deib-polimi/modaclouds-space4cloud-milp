@@ -24,6 +24,7 @@ import it.polimi.modaclouds.qos_models.util.XMLHelper;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,6 +40,15 @@ public class Configuration {
 	public static String PALLADIO_ALLOCATION_MODEL;	//Path to Allocation Diagram
 	public static String PALLADIO_RESOURCE_MODEL;		//Path to ResourceEnvironment Diagram
 	public static String PALLADIO_SYSTEM_MODEL;		//Path to System Diagram
+	
+	public static final String SUFFIX = "-MILP";
+	
+	public static InputStream getStream(String file) {
+		InputStream res = Configuration.class.getResourceAsStream("/" + file + SUFFIX);
+		if (res == null)
+			res = Configuration.class.getResourceAsStream("/" + file);
+		return res;
+	}
 	
 	// Information used in the AMPL.run file
 	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c"; //upload directory on AMPL server
