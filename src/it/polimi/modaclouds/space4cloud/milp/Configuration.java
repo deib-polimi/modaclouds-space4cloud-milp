@@ -55,20 +55,28 @@ public class Configuration {
 		return res;
 	}
 	
+	// Information used in the AMPL.run file
+	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c"; //upload directory on AMPL server
+	public static final String DEFAULTS_WORKING_DIRECTORY_SUFFIX = "milp";
+	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
+	
 	public static String LOCAL_TEMPORARY_FOLDER;
 	static {
 		try {
-			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory("milp").toString();
+			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory(DEFAULTS_WORKING_DIRECTORY_SUFFIX).toString();
 		} catch (Exception e) {
 			logger.error("Error while creating a temporary folder.", e);
 			LOCAL_TEMPORARY_FOLDER = ".";
 		}
 	}
 	
-	// Information used in the AMPL.run file
-	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c"; //upload directory on AMPL server
-	public static final String DEFAULTS_WORKING_DIRECTORY_SUFFIX = "/milp";
-	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY + DEFAULTS_WORKING_DIRECTORY_SUFFIX;
+	public static void setWorkingSubDirectory(String date) {
+		if (isRunningLocally())
+			RUN_WORKING_DIRECTORY = LOCAL_TEMPORARY_FOLDER;
+		else
+			RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY + "/" + DEFAULTS_WORKING_DIRECTORY_SUFFIX + "/" + date;
+	}
+	
 	public static final String RUN_FILE = "AMPL.run"; //sets where temp AMPL file AMPL.run will be saved
 	public static final String RUN_MODEL_STANDARD = "model.mod";
 	public static final String RUN_MODEL_STARTING_SOLUTION = "modelstartingsolution.mod";
