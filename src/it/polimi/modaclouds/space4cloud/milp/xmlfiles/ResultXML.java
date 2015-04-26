@@ -47,11 +47,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 //this class is used to parse AMPL result
 public abstract class ResultXML {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ResultXML.class);
 
 	// File with AMPL logs (on local machine)
 	public String LogFilePath;
@@ -105,7 +109,7 @@ public abstract class ResultXML {
 			
 			writeFile(doc);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			logger.error("Error while exporting the empty result.", e);
 		}
 	}
 
@@ -123,7 +127,7 @@ public abstract class ResultXML {
 			// Write to File
 			m.marshal(rme, new File(FinalResPath));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while writing the resource model extension.", e);
 		}
 	}
 	
@@ -141,7 +145,7 @@ public abstract class ResultXML {
 			// Write to File
 			m.marshal(mces, new File(FinalResPathMce));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while writing the multi cloud extension.", e);
 		}
 	}
 	
@@ -160,7 +164,7 @@ public abstract class ResultXML {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while writing the document.", e);
 		}
 	}
 	
@@ -374,7 +378,7 @@ public abstract class ResultXML {
 			writeFile(doc);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while writing the solution.", e);
 		}
 	}
 	

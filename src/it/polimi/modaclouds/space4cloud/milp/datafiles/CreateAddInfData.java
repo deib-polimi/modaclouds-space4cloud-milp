@@ -22,10 +22,12 @@ import it.polimi.modaclouds.qos_models.schema.OpenWorkload;
 import it.polimi.modaclouds.qos_models.schema.OpenWorkloadElement;
 import it.polimi.modaclouds.qos_models.schema.UsageModelExtensions;
 import it.polimi.modaclouds.qos_models.util.XMLHelper;
+import it.polimi.modaclouds.space4cloud.milp.Configuration;
 import it.polimi.modaclouds.space4cloud.milp.xmldatalists.AddInfList;
 import it.polimi.modaclouds.space4cloud.milp.xmlfiles.ConstraintXML;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
@@ -38,6 +40,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,6 +49,8 @@ import org.w3c.dom.Element;
 //this class is used to create all necessary additional data:
 //arrival rate; minimum arrival rate per provider; border on system response time; minimum number of providers
 public class CreateAddInfData {
+	
+	private static final Logger logger = LoggerFactory.getLogger(CreateAddInfData.class);
 
 	// main container for parsed data
 	public AddInfList newAddInfList = null;
@@ -126,11 +132,11 @@ public class CreateAddInfData {
 					.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(AddInfFilePath));
+			StreamResult result = new StreamResult(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, AddInfFilePath).toFile());
 			transformer.transform(source, result);
 
 		} catch (ParserConfigurationException | TransformerException e) {
-			e.printStackTrace();
+			logger.error("Error while writing the add inf data.", e);
 		}
 	}
 	
@@ -160,7 +166,7 @@ public class CreateAddInfData {
 			umes = XMLHelper.deserialize(new File(usageModelExtFile).toURI().toURL(),
 					UsageModelExtensions.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while reading the usage model extension file.", e);
 			return;
 		}
 		

@@ -31,8 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //contains main options of the program
 public class Configuration {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 	
 	// Information about the application
 	public static String PALLADIO_USAGE_MODEL;			//Path to UsageModel Diagram
@@ -48,6 +53,16 @@ public class Configuration {
 		if (res == null)
 			res = Configuration.class.getResourceAsStream("/" + file);
 		return res;
+	}
+	
+	public static String LOCAL_TEMPORARY_FOLDER;
+	static {
+		try {
+			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory("milp").toString();
+		} catch (Exception e) {
+			logger.error("Error while creating a temporary folder.", e);
+			LOCAL_TEMPORARY_FOLDER = ".";
+		}
 	}
 	
 	// Information used in the AMPL.run file
@@ -102,21 +117,25 @@ public class Configuration {
 	// this function deletes all temp files
 	public static void deleteTempFiles() {
 		try {
-			Files.deleteIfExists(Paths.get(RUN_FILE));
-			Files.deleteIfExists(Paths.get(RUN_DATA));
-			Files.deleteIfExists(Paths.get(RUN_RES));
-			Files.deleteIfExists(Paths.get(RUN_LOG));
-			Files.deleteIfExists(Paths.get(RUN_MODEL_STANDARD));
-			Files.deleteIfExists(Paths.get(RUN_MODEL_STARTING_SOLUTION));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_FILE));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_DATA));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_RES));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_LOG));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_MODEL_STANDARD));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_MODEL_STARTING_SOLUTION));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, DEFAULTS_BASH));
 			
-			Files.deleteIfExists(Paths.get(RUN_FILE_CMPL));
-			Files.deleteIfExists(Paths.get(RUN_DATA_CMPL));
-			Files.deleteIfExists(Paths.get(RUN_RES_CMPL));
-			Files.deleteIfExists(Paths.get(RUN_LOG_CMPL));
-			Files.deleteIfExists(Paths.get(RUN_MODEL_STANDARD_CMPL));
-			Files.deleteIfExists(Paths.get(RUN_MODEL_STARTING_SOLUTION_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_FILE_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_DATA_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_RES_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_LOG_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_MODEL_STANDARD_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_MODEL_STARTING_SOLUTION_CMPL));
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, DEFAULTS_BASH_CMPL));
+			
+			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while deleting the temporary files.", e);
 		}
 	}
 
@@ -314,7 +333,7 @@ public class Configuration {
 					return true;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while checking if the solution uses PaaS.", e);
 			return false;
 		}
 		

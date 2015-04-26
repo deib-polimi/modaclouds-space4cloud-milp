@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,6 +45,8 @@ import it.polimi.modaclouds.space4cloud.milp.xmldatalists.SolutionList;
  *
  */
 public class ParsSolution {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ParsSolution.class);
 	
 	public SolutionList solution = null;
 	
@@ -142,7 +146,7 @@ public class ParsSolution {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while reading the resource model extension.", e);
 			
 			solution = null;
 		}
@@ -231,7 +235,7 @@ public class ParsSolution {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while reading the file solution.", e);
 			
 			solution = null;
 		}

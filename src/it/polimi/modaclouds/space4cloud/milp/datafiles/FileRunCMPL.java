@@ -4,6 +4,7 @@ import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class FileRunCMPL extends FileRun {
@@ -13,7 +14,7 @@ public class FileRunCMPL extends FileRun {
 			String UploadPath, String FilePathStartingSolution) {
 		
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(AMPLrunFilePath));
+			PrintWriter out = new PrintWriter(new FileWriter(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, AMPLrunFilePath).toFile()));
 			
 			String baseFile = ""; //new String(Files.readAllBytes(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE))); //, Charset.defaultCharset()); // StandardCharsets.UTF_8);
 			

@@ -14,12 +14,17 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * Parses the Resourse Environment Extension file.
  *
  */
 public class ParsResEnvExt {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ParsResEnvExt.class);
 	
 	public SolutionList solution = null;
 	
@@ -102,7 +107,7 @@ public class ParsResEnvExt {
 				
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while reading the resource model extension.", e);
 			
 			solution = null;
 		}

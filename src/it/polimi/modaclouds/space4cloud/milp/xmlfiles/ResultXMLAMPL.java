@@ -8,20 +8,28 @@ import it.polimi.modaclouds.space4cloud.milp.xmldatalists.RepositoryList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ResultXMLAMPL extends ResultXML {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ResultXMLAMPL.class);
+	
 	// constructor
 	public ResultXMLAMPL() {
 		super();
-		LogFilePath = Configuration.RUN_LOG;
-		ResFilePath = Configuration.RUN_RES;
+		LogFilePath = Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, Configuration.RUN_LOG).toString();
+		ResFilePath = Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, Configuration.RUN_RES).toString();
 	}
 	
 	// function which prints final result file
 	// CRList - container with information from PCM model
 	// CDBList - container with information from AddInfData file
 	// newMatrix - container with information from SQL database
+	@SuppressWarnings("deprecation")
 	@Override
 	public int printFile(RepositoryList CRList, DBList CDBList,
 			SqlBaseParsMatrix newMatrix) {
@@ -63,7 +71,7 @@ public class ResultXMLAMPL extends ResultXML {
 			time = Math.round((Double.parseDouble(InputTime) + Double.parseDouble(SolveTime) + Double.parseDouble(OutputTime)) * 1000);
 			cost = Double.parseDouble(Objective);
 		} catch (Exception ioe) {
-			ioe.printStackTrace();
+			logger.error("Error while reading the log file.", ioe);
 			time = 0L;
 			cost = 0.0;
 		}
@@ -135,7 +143,7 @@ public class ResultXMLAMPL extends ResultXML {
 			in_buf.close();
 
 		} catch (Exception ioe) {
-			ioe.printStackTrace();
+			logger.error("Error while reading the result file.", ioe);
 		}
 		
 		/////////////////////////////////////////////

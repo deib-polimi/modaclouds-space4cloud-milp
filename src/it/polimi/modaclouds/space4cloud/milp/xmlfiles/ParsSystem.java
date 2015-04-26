@@ -25,6 +25,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +34,8 @@ import org.w3c.dom.NodeList;
 
 //this class works with System Diagram
 public class ParsSystem {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ParsSystem.class);
 
 	// amount of AssemlyContext elements in the parsed document
 	public int countAssemblyContexts = 0;
@@ -65,7 +69,7 @@ public class ParsSystem {
 			loadrez = true;
 		} catch (Exception e) {
 //			e.getMessage();
-			e.printStackTrace();
+			logger.error("Error while reading the model.", e);
 			loadrez = false;
 		}
 		return loadrez;

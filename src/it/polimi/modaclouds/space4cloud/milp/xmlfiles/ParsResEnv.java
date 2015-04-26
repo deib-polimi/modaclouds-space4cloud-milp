@@ -25,6 +25,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +34,8 @@ import org.w3c.dom.NodeList;
 
 //this file works with Resource Environment Diagram
 public class ParsResEnv {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ParsResEnv.class);
 
 	// amount of containers
 	public int countContainers = 0;
@@ -65,7 +69,7 @@ public class ParsResEnv {
 			loadrez = true;
 		} catch (Exception e) {
 //			e.getMessage();
-			e.printStackTrace();
+			logger.error("Error while loading the model.", e);
 			loadrez = false;
 		}
 		return loadrez;

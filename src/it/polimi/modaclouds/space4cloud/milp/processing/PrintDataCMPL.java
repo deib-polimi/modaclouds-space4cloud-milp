@@ -7,9 +7,15 @@ import it.polimi.modaclouds.space4cloud.milp.xmldatalists.SolutionList;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PrintDataCMPL extends PrintData {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PrintDataCMPL.class);
 
 	public PrintDataCMPL(String CurrFilePath, String CurrFilePathConst) {
 		super(CurrFilePath, CurrFilePathConst);
@@ -23,7 +29,7 @@ public class PrintDataCMPL extends PrintData {
 		DecimalFormat doubleFormatter = doubleFormatter();
 
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(SaveFilePath));
+			PrintWriter out = new PrintWriter(new FileWriter(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, SaveFilePath).toFile()));
 			out.print("%CONTAINER set <");
 			for (int i = 1; i <= newdatacollection.CountContainers; ++i)
 				out.printf(" i%d", i);
@@ -220,7 +226,7 @@ public class PrintDataCMPL extends PrintData {
 
 			out.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while writing the data file.", e);
 		}
 
 		return true;

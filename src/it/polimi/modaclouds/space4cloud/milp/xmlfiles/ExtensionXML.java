@@ -26,12 +26,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 //is used to create model extension file
 public class ExtensionXML {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExtensionXML.class);
 
 	// index of the file in wrapperextension class
 	// now is not used
@@ -116,7 +120,7 @@ public class ExtensionXML {
 			loadrez = true;
 		} catch (Exception e) {
 //			e.getMessage();
-			e.printStackTrace();
+			logger.error("Error while loading the model.", e);
 			loadrez = false;
 		}
 		return loadrez;
@@ -205,7 +209,7 @@ public class ExtensionXML {
 			transformer.transform(source, result);
 			
 		} catch (TransformerException tfe) {
-			tfe.printStackTrace();
+			logger.error("Error while creating the extension.", tfe);
 		}
 		return 0;
 	}

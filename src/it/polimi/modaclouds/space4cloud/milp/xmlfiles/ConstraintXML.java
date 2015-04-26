@@ -25,8 +25,13 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //this class reads model constraint file
 public class ConstraintXML {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConstraintXML.class);
 
 	// path to file with model constraints
 	public String FilePathConstraint = "";
@@ -89,7 +94,7 @@ public class ConstraintXML {
 			loadrez = true;
 		} catch (Exception e) {
 			//			e.getMessage();
-			e.printStackTrace();
+			logger.error("Error while reading the constraints file.", e);
 			loadrez = false;
 		}
 		return loadrez;

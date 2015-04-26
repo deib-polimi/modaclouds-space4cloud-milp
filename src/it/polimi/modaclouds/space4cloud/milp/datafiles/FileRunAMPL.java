@@ -20,6 +20,7 @@ import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 //this class creates local copy of AMPL.run file
@@ -36,7 +37,7 @@ public class FileRunAMPL extends FileRun {
 			String UploadPath, String FilePathStartingSolution) {
 		
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(AMPLrunFilePath));
+			PrintWriter out = new PrintWriter(new FileWriter(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, AMPLrunFilePath).toFile()));
 			
 			String baseFile = ""; //new String(Files.readAllBytes(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE))); //, Charset.defaultCharset()); // StandardCharsets.UTF_8);
 			
@@ -63,41 +64,6 @@ public class FileRunAMPL extends FileRun {
 		} catch (Exception e) {
 			return;
 		}
-		
-		
-//		try {Writer wrt = new FileWriter(AMPLrunFilePath);
-//			PrintWriter out = new PrintWriter(wrt);
-//			out.println("cd "
-//					+ UploadPath.substring(0, UploadPath.length() - 1) + ";");
-//			out.println("reset;");
-//			out.println("option log_file 'log.tmp';");
-//			if (FilePathStartingSolution != null) { 
-//				out.println("model modelstartingsolution.mod;");
-////				out.println("option presolve 0;");
-//			} else
-//				out.println("model model.mod;"); 
-//			out.println("data data.dat;");
-//			
-//			//TODO: what happens if the solver is not there?
-//			out.println("option solver '/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp';");
-//			out.println("option show_stats 1;");
-//			if (!TimeLimit.equalsIgnoreCase(""))
-//				out.println("option timelimit " + TimeLimit + ";");
-//			out.println("option cplex_options 'timing=1';");
-//			out.println("solve;");
-//			out.println("display X,PartialArrRate,AmountVM > rez.out;");
-//			out.println("display {v in TYPE_VM, p in PROVIDER, i in CONTAINER:W[v,p,i]>0} (W[v,p,i]), W >> rez.out;");
-//			//out.println("display DiffResponseTime >> rez.out;");
-//			out.println("display sum{t in TIME_INT, p in PROVIDER, i in CONTAINER, v in TYPE_VM} (Cost[v, p, i]*AmountVM[v, p, i, t]) > shortrez.out;");
-//			out.println("display {p in PROVIDER, t in TIME_INT, i in CONTAINER, v in TYPE_VM:AmountVM[v,p,i,t]>0} (AmountVM[v,p,i,t],PartialArrRate[p,t]) >> shortrez.out;");
-//			out.println("option log_file '';");
-//			out.println("close shortrez.out;");
-//			out.println("close rez.out;");
-//			out.println("close log.tmp;");
-//			out.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	public static void print() {

@@ -4,6 +4,7 @@ import it.polimi.modaclouds.space4cloud.milp.Configuration;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class ModelCMPL extends Model {
@@ -16,7 +17,7 @@ public class ModelCMPL extends Model {
 	
 	private boolean singlePrint(String origFile, String destFile) {
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(destFile));
+			PrintWriter out = new PrintWriter(new FileWriter(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, destFile).toFile()));
 			
 			String baseFile = "";
 			
