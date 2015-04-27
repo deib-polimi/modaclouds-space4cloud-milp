@@ -61,14 +61,6 @@ public class Configuration {
 	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
 	
 	public static String LOCAL_TEMPORARY_FOLDER;
-	static {
-		try {
-			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory(DEFAULTS_WORKING_DIRECTORY_SUFFIX).toString();
-		} catch (Exception e) {
-			logger.error("Error while creating a temporary folder.", e);
-			LOCAL_TEMPORARY_FOLDER = ".";
-		}
-	}
 	
 	public static void setWorkingSubDirectory(String date) {
 		if (isRunningLocally())
@@ -275,6 +267,13 @@ public class Configuration {
 		} catch (Exception e) { }
 		
 		MATH_SOLVER = Solver.getByName(prop.getProperty("MATH_SOLVER", MATH_SOLVER.getName()));
+		
+		try {
+			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory(DEFAULTS_WORKING_DIRECTORY_SUFFIX).toString();
+		} catch (Exception e) {
+			logger.error("Error while creating a temporary folder.", e);
+			LOCAL_TEMPORARY_FOLDER = ".";
+		}
 	}
 	
 	/**
