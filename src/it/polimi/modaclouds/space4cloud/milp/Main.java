@@ -63,6 +63,8 @@ public class Main {
 		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
 		String configuration  = basePath + "OptimizationMacLocal.properties"; //"conference-opt-2p.properties";
 		String solution       = basePath + "ContainerExtensions/Computed/Solution-Conference-Amazon.xml";
+//		String configuration  = basePath + "OptimizationMacNumber.properties"; //"conference-opt-2p.properties";
+//		String solution = null;
 		
 		doMain(configuration, solution, new String[] {});
 	}

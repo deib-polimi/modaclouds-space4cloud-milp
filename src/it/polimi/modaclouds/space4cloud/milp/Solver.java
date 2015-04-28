@@ -164,11 +164,6 @@ public class Solver {
 		multiCloudExt = null;
 	}
 	
-	public void setMinimumNumberOfProviders(int num) {
-		Configuration.MAP = num;
-		reset();
-	}
-	
 	private ArrayList<String> providers = new ArrayList<String>();
 	
 	public void setProviders(String... provider) {
