@@ -172,6 +172,11 @@ public class CreateAddInfData {
 		
 		if (constraintFile != null && constraintFile.length() > 0) {
 			constraints = new ConstraintXML(constraintFile);
+			
+			int tmp = constraints.getMinimumProviders();
+			if (tmp > -1)
+				MinProvVal = tmp;
+			
 			newAddInfList.MaxSystemResponseTime = constraints.getAvgMaxResponseTime();
 		} else {
 			newAddInfList.MaxSystemResponseTime = 0.4;

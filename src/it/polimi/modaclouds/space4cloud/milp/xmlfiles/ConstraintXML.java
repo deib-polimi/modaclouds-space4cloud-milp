@@ -43,6 +43,8 @@ public class ConstraintXML {
 	private LinkedHashMap<String, Float> responseTimesConstraints = new LinkedHashMap<String, Float>();
 	private LinkedHashMap<String, Float> availabilitiesConstraints = new LinkedHashMap<String, Float>();
 	private LinkedHashMap<String, Float> workloadPercentagesConstraints = new LinkedHashMap<String, Float>();
+	
+	private int minimumProviders = -1;
 
 	// constructors
 	public ConstraintXML(String FPConstr) {
@@ -84,6 +86,9 @@ public class ConstraintXML {
 						break;
 					case WORKLOADPERCENTAGE:
 						workloadPercentagesConstraints.put(target, new Float(minValue * 0.01)); // saved with a value from 0 to 1 where expressed in %
+						break;
+					case NUMBERPROVIDERS:
+						minimumProviders = minValue.intValue();
 						break;
 					default:
 						break;
@@ -144,12 +149,17 @@ public class ConstraintXML {
 
 		return sum/workloadPercentagesConstraints.size();
 	}
+	
+	public int getMinimumProviders() {
+		return minimumProviders;
+	}
 
 	public enum Metric {
 		REPLICATION("Replication"), RAM("RAM"), HDD("HardDisk"), CORES("Cores"), CPU(
 				"CPUUtilization"), MACHINETYPE("MachineType"), SERVICETYPE(
 						"ServiceType"), RESPONSETIME("ResponseTime"), AVAILABILITY(
-								"Availability"), RELIABILITY("Reliability"), WORKLOADPERCENTAGE("WorkloadPercentage");
+								"Availability"), RELIABILITY("Reliability"), WORKLOADPERCENTAGE("WorkloadPercentage"),
+								NUMBERPROVIDERS("NumberProviders");
 
 		public static Metric getMetricFromTag(String tag) {
 			switch (tag) {
@@ -181,6 +191,8 @@ public class ConstraintXML {
 				return RELIABILITY;
 			case "WorkloadPercentage":
 				return WORKLOADPERCENTAGE;
+			case "NumberProviders":
+				return NUMBERPROVIDERS;
 			default:
 				return null;
 			}
