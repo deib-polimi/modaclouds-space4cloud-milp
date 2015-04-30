@@ -70,8 +70,10 @@ public class Main {
 	}
 	
 	public static void mainStandard(String[] args) {
-		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "OptimizationMacLocal.properties"; //"conference-opt-2p.properties";
+//		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/Constellation/Configuration/";
+//		String configuration  = basePath + "OptimizationMacLocalContracts.properties";
+		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/Configuration/";
+		String configuration  = basePath + "Optimization.properties";
 		
 //		String[] providers = {"CloudSigma"}; // , "Microsoft"};
 		
@@ -80,7 +82,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		mainInitialSolution(args);
+		mainStandard(args);
 	}
 
 }

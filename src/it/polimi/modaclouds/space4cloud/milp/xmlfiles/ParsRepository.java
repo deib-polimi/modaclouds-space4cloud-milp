@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -177,6 +178,64 @@ public class ParsRepository {
 			i++;
 		return i;
 	}
+	
+	@SuppressWarnings("unused")
+	private void printElement(Element e) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\"" + e.getTagName() + "\" : {\n");
+		NamedNodeMap map = e.getAttributes();
+		for (int i = 0; i < map.getLength(); ++i) {
+			Node n = map.item(i);
+			sb.append("\t\"" + n.getNodeName() + "\" : \"" + n.getNodeValue() + "\"\n");
+		}
+		String body = e.getTextContent().trim();
+		if (body.length() > 0)
+			sb.append("\t\"body\" : \"" + body + "\"\n");
+		sb.append("}");
+		System.out.println(sb.toString());
+	}
+	
+	private int getActualCount() {
+		// receive list of components
+		List<Element> NewComponentsList = getElements(root,
+				"components__Repository");
+		
+		int count = 0;
+		
+		for (Element CurrComponent : NewComponentsList)
+			count += getInternalActions(CurrComponent).size();
+		
+		return count;
+	}
+	
+	private double getAvgResourceDemand() {
+		// receive list of components
+		List<Element> NewComponentsList = getElements(root,
+				"components__Repository");
+		
+		int countValid = 0;
+		double sumValid = 0.0;
+		
+		for (Element CurrComponent : NewComponentsList) {
+			List<Element> NewRDActionListInComponent = getInternalActions(CurrComponent);
+			for (Element CurrAction : NewRDActionListInComponent) {
+				List<Element> NewSpecificationList = getElements(CurrAction,
+						"specification_ParametericResourceDemand");
+				try {
+					Element SpecificationElem = NewSpecificationList.get(0);
+					String demandStr = SpecificationElem
+							.getAttribute("specification");
+					sumValid += Double.parseDouble(demandStr);
+					countValid++;
+				} catch (Exception e) { }
+			}
+		}
+		
+		if (countValid > 0)
+			return sumValid / countValid;
+		else
+			return 0.0;
+	}
 
 	// main execution function
 	public int analyse_doc() {
@@ -189,10 +248,12 @@ public class ParsRepository {
 				"components__Repository");
 		countComponents = NewComponentsList.size();
 
-		// receive list of Actions with Resource Demands
-		List<Element> NewResourceDemandActionList = getElements(root,
-				"resourceDemand_Action");
-		countRDActions = NewResourceDemandActionList.size();
+//		// receive list of Actions with Resource Demands
+//		List<Element> NewResourceDemandActionList = getElements(root,
+//				"resourceDemand_Action");
+//		countRDActions = NewResourceDemandActionList.size();
+		
+		countRDActions = getActualCount();
 
 		// initialization block
 		RDDemand = new double[countRDActions];
@@ -207,6 +268,9 @@ public class ParsRepository {
 		// sets Ids of ResDemsnd actions
 		// and Ids and Names of corresponding components
 		int kcount = 0;
+		
+		double avgResourceDemand = getAvgResourceDemand();
+		
 		for (int i = 0; i < countComponents; i++) {
 			Element CurrComponent = NewComponentsList.get(i);
 			List<Element> NewRDActionListInComponent = getInternalActions(CurrComponent);
@@ -218,10 +282,16 @@ public class ParsRepository {
 				RDActionIDs[kcount] = RDAIdStr;
 				List<Element> NewSpecificationList = getElements(CurrAction,
 						"specification_ParametericResourceDemand");
-				Element SpecificationElem = NewSpecificationList.get(0);
-				String demandStr = SpecificationElem
-						.getAttribute("specification");
-				RDDemand[kcount] = Double.parseDouble(demandStr);
+				try {
+					Element SpecificationElem = NewSpecificationList.get(0);
+					String demandStr = SpecificationElem
+							.getAttribute("specification");
+					RDDemand[kcount] = Double.parseDouble(demandStr);
+				} catch (Exception e) {
+					// TODO: check this
+					RDDemand[kcount] = avgResourceDemand; //0.01;
+//					continue;
+				}
 				resRepositoryList.ComponentIds[kcount] = TempStr1;
 				resRepositoryList.ComponentNames[kcount] = TempStr2;
 				kcount++;
