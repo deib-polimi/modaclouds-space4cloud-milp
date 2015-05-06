@@ -70,10 +70,10 @@ public class Main {
 	}
 	
 	public static void mainStandard(String[] args) {
-//		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/Constellation/Configuration/";
-//		String configuration  = basePath + "OptimizationMacLocalContracts.properties";
-		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/Configuration/";
-		String configuration  = basePath + "Optimization.properties";
+		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/Constellation/Configuration/";
+		String configuration  = basePath + "OptimizationMacLocalContracts.properties";
+//		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/Configuration/";
+//		String configuration  = basePath + "Optimization.properties";
 		
 //		String[] providers = {"CloudSigma"}; // , "Microsoft"};
 		
