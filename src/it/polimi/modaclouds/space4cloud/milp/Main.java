@@ -78,7 +78,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		args = "-configuration /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS-2tier/Configuration/aaa.properties -providers Amazon".split(" ");
+//		args = "-configuration /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS-2tier/Configuration/aaa.properties -providers Amazon".split(" ");
 
 		Main m = new Main();
 		JCommander jc = new JCommander(m, args);
