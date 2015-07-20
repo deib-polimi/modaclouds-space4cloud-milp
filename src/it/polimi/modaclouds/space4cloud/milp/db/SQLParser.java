@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 //class for interaction with database
 public class SQLParser {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SQLParser.class);
 
 	// amount of providers
@@ -59,7 +59,7 @@ public class SQLParser {
 	// Database contains list of providers and only subset of them provides IaaS
 	// this array is used to select them
 	private boolean[] ProviderIsUsed = null;
-	
+
 	private double[] availabilities = null;
 
 	// connection and statement to SQL database
@@ -68,14 +68,17 @@ public class SQLParser {
 
 	private ArrayList<String> allowedProviders = null;
 	private ArrayList<String> allowedRegions = null;
-	
+
+	private Configuration.Benchmark benchmark;
+
 	public SQLParser() throws Exception {
 		allowedProviders = Configuration.AllowedProviders;
 		allowedRegions = Configuration.AllowedRegions;
-		
+		benchmark = Configuration.BENCHMARK;
+
 		FileInputStream fis = new FileInputStream(Configuration.DB_CONNECTION_FILE);
 		DatabaseConnector.initConnection(fis);
-		
+
 		parseit();
 	}
 
@@ -101,9 +104,10 @@ public class SQLParser {
 		}
 		return res;
 	}
-	
+
 	private String researchSqlProviders = "";
 	private String researchSqlRegions = "";
+	private String researchSqlInstances = "";
 
 	// main function for interaction with database
 	// driver - the jdbc driver
@@ -116,7 +120,7 @@ public class SQLParser {
 
 			// creates connection
 			conn = DatabaseConnector.getConnection();
-			
+
 			Statement st = conn.createStatement();
 
 			if (allowedProviders == null || allowedProviders.size() == 0) {
@@ -125,20 +129,20 @@ public class SQLParser {
 			} else {
 				// receives amount of providers
 				countproviders = allowedProviders.size();
-				
+
 //				researchSqlProviders = " AND (";
 //				int i;
 //				for (i = 0; i < allowedProviders.size()-1; ++i)
 //					researchSqlProviders += "cloudprovider.name = '" + allowedProviders.get(i) + "' OR ";
 //				researchSqlProviders += "cloudprovider.name = '" + allowedProviders.get(i) + "')";
-				
+
 				researchSqlProviders = " AND cloudprovider.name IN (";
 				int i;
 				for (i = 0; i < allowedProviders.size()-1; ++i)
 					researchSqlProviders += "'" + allowedProviders.get(i) + "', ";
 				researchSqlProviders += "'" + allowedProviders.get(i) + "')";
 			}
-			
+
 			if (allowedRegions != null && allowedRegions.size() > 0) {
 				researchSqlRegions = " AND cost.region IN (";
 				int i;
@@ -146,15 +150,41 @@ public class SQLParser {
 					researchSqlRegions += "'" + allowedRegions.get(i) + "', ";
 				researchSqlRegions += "'" + allowedRegions.get(i) + "')";
 			}
-			
+
+			if (benchmark != Configuration.Benchmark.None) {
+				String providersForBenchmark = "";
+				if (allowedProviders != null && allowedProviders.size() > 0) {
+					providersForBenchmark = " AND CloudProvider IN (";
+					int i;
+					for (i = 0; i < allowedProviders.size()-1; ++i)
+						providersForBenchmark += "'" + allowedProviders.get(i).toLowerCase().replaceAll("microsoft", "azure") + "', ";
+					providersForBenchmark += "'" + allowedProviders.get(i).toLowerCase().replaceAll("microsoft", "azure") + "')";
+				}
+
+				try (ResultSet rs = st.executeQuery(String.format(SQLRequestsCollection.InstancesForBenchmarkRequest, benchmark.toString(), providersForBenchmark))) {
+
+					while (rs.next()) {
+						String instanceType = rs.getString(1);
+						researchSqlInstances += "%1$s LIKE '%%" + instanceType + "%%' OR ";
+					}
+				} catch (Exception e){
+					logger.error("Error while parsing the SQL result.", e);
+					researchSqlInstances = "";
+				}
+
+				if (researchSqlInstances.trim().length() > 0) {
+					researchSqlInstances = " AND (" + researchSqlInstances + "false)";
+				}
+			}
+
 			// receives amount of all VM types
-			int fullcounttypes = getTableCount(String.format(SQLRequestsCollection.CountTypesRequest, researchSqlProviders, researchSqlRegions));
+			int fullcounttypes = getTableCount(String.format(SQLRequestsCollection.CountTypesRequest, researchSqlProviders, researchSqlRegions, String.format(researchSqlInstances, "cost.description")));
 
 			ProviderId = new int[countproviders];
 			ProviderName = new String[countproviders];
 			CountTypesByProviders = new int[countproviders];
 			availabilities = new double[countproviders];
-			
+
 			int count = 0;
 
 			{
@@ -176,7 +206,7 @@ public class SQLParser {
 			// call constructor of temp container of VM types
 			SqlBaseParsElement newSqlBaseParsElement = new SqlBaseParsElement(
 					fullcounttypes);
-			
+
 			{
 				// receives parameters of VM types (without memory)
 				// saves it in newSqlBaseParsElement
@@ -184,9 +214,9 @@ public class SQLParser {
 				// partition by providers
 				ResultSet rs = null;
 				try {
-					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequest, researchSqlProviders, researchSqlRegions));
+					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequest, researchSqlProviders, researchSqlRegions, String.format(researchSqlInstances, "cloudresource.name")));
 				} catch (Exception e) {
-					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequestNoRegion, researchSqlProviders));
+					rs = st.executeQuery(String.format(SQLRequestsCollection.ProcessorRequestNoRegion, researchSqlProviders, String.format(researchSqlInstances, "cloudresource.name")));
 				}
 				count = 0; // simple counter by number of VM types
 				while (rs.next()) {
@@ -207,10 +237,10 @@ public class SQLParser {
 					newSqlBaseParsElement.cost[count] = Double.parseDouble(Fstr);
 					Fstr = rs.getString(7);
 					newSqlBaseParsElement.TypeName[count] = Fstr;
-					
+
 					Fstr = rs.getString(8);
 					newSqlBaseParsElement.Region[count] = Fstr;
-					
+
 					// increase amount of VM types for provider with id
 					// ProviderId[schet]
 					IncrementTypesByProviderId(newSqlBaseParsElement.ProviderId[count]);
@@ -222,7 +252,7 @@ public class SQLParser {
 
 			{
 				// receives memory parameters for VM types
-				ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.MemoryRequest, researchSqlProviders, researchSqlRegions));
+				ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.MemoryRequest, researchSqlProviders, researchSqlRegions, String.format(researchSqlInstances, "cost.description")));
 				count = 0;
 				while (rm.next()) {
 					String Fstr = rm.getString(1);
@@ -234,11 +264,11 @@ public class SQLParser {
 				if (rm != null)
 					rm.close();
 			}
-			
+
 			{
 				// receives availability parameters for each provider
 				ResultSet rm = st.executeQuery(String.format(SQLRequestsCollection.AvaliabilityRequest, researchSqlProviders));
-				
+
 				count = 0;
 				while (rm.next()) {
 					availabilities[count++] = rm.getDouble(3);
@@ -298,9 +328,9 @@ public class SQLParser {
 				resMatrix.numberOfReplicas[j][IndexTypeOfProvider[j]] = newSqlBaseParsElement.numberOfReplicas[i];
 				resMatrix.processingRate[j][IndexTypeOfProvider[j]] = newSqlBaseParsElement.processingRate[i];
 				resMatrix.TypeName[j][IndexTypeOfProvider[j]] = newSqlBaseParsElement.TypeName[i];
-				
+
 				resMatrix.Region[j][IndexTypeOfProvider[j]] = newSqlBaseParsElement.Region[i];
-				
+
 				IndexTypeOfProvider[j]++;
 			}
 		} catch (SQLException e) {

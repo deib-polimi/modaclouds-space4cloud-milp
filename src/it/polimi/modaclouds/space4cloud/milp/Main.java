@@ -17,37 +17,55 @@
 package it.polimi.modaclouds.space4cloud.milp;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
-	
+
+	@Parameter(names = { "-h", "--help" }, help = true)
+	private boolean help = false;
+
+	@Parameter(names = "-configuration", description = "The path to the configuration file", required = true)
+	private String configuration = null;
+
+	@Parameter(names = "-solution", description = "The path to the solution file")
+	private String solution = null;
+
+	@Parameter(names = "-providers", description = "The providers that will be considered")
+	private List<String> providers = new ArrayList<>();
+
+	public static final String APP_TITLE = "\nMILP\n";
+
 	public static void doMain(String configuration, String solution, String[] providers) {
 		if (configuration == null || !new File(configuration).exists()) {
 			logger.error("The configuration file doesn't exist! Exiting...");
 			return;
 		}
-		
+
 		Solver.removeTempFiles = false;
-		
+
 		try {
 			Solver s = null;
-			
+
 			if (solution != null)
 				s = new Solver(configuration, solution);
 			else
 				s = new Solver(configuration);
-			
+
 			if (providers.length > 0)
 				s.setProviders(providers);
-			
+
 			File resourceEnvExtFile = s.getResourceModelExt();
 			File initialSolution = s.getSolution();
 			File initialMce = s.getMultiCloudExt();
-	
+
 			logger.debug("Generated resource model extension: "
 					+ resourceEnvExtFile.getAbsolutePath());
 			logger.debug("Generated solution: "
@@ -58,31 +76,25 @@ public class Main {
 			logger.error("Error while computing the solution!", e);
 		}
 	}
-	
-	public static void mainInitialSolution(String[] args) {
-		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/"; //"C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "OptimizationMacLocal.properties"; //"conference-opt-2p.properties";
-		String solution       = basePath + "ContainerExtensions/Computed/Solution-Conference-Amazon.xml";
-//		String configuration  = basePath + "OptimizationMacNumber.properties"; //"conference-opt-2p.properties";
-//		String solution = null;
-		
-		doMain(configuration, solution, new String[] {});
-	}
-	
-	public static void mainStandard(String[] args) {
-		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/Constellation/Configuration/";
-		String configuration  = basePath + "OptimizationMacLocalContracts.properties";
-//		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS/Configuration/";
-//		String configuration  = basePath + "Optimization.properties";
-		
-//		String[] providers = {"CloudSigma"}; // , "Microsoft"};
-		
-		doMain(configuration, null, new String[] {}); //, providers);
-		
-	}
-	
+
 	public static void main(String[] args) {
-		mainStandard(args);
+		args = "-configuration /Users/ft/Development/workspace-s4c-runtime/modaclouds-models/MiCforJSS-2tier/Configuration/aaa.properties -providers Amazon".split(" ");
+
+		Main m = new Main();
+		JCommander jc = new JCommander(m, args);
+
+		System.out.println(APP_TITLE);
+
+		if (m.help) {
+			jc.usage();
+			System.exit(0);
+		}
+
+		String[] providers = new String[m.providers.size()];
+		for (int i = 0; i < providers.length; ++i)
+			providers[i] = m.providers.get(i);
+
+		doMain(m.configuration, m.solution, providers);
 	}
 
 }
