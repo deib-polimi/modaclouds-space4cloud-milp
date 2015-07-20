@@ -29,7 +29,7 @@ public class Main {
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-	@Parameter(names = { "-h", "--help" }, help = true)
+	@Parameter(names = { "-h", "--help" }, description = "Shows this help", help = true)
 	private boolean help = false;
 
 	@Parameter(names = "-configuration", description = "The path to the configuration file", required = true)
@@ -86,6 +86,7 @@ public class Main {
 		System.out.println(APP_TITLE);
 
 		if (m.help) {
+			jc.setProgramName("milp");
 			jc.usage();
 			System.exit(0);
 		}
