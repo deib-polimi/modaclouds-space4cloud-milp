@@ -6,6 +6,8 @@
 %%opt cplex threads %4$d
 %%opt cbc threads %4$d
 %%opt glpk threads %4$d
+%%opt cbc ratio 0.01
+%%opt cplex EpGap 0.01
 
 %%data %s : CONTAINER set, PROVIDER set, CLASS_REQUEST set, TYPE_VM set, TIME_INT set, COMPONENT set, ProbabilityToBeInComponent[CLASS_REQUEST, COMPONENT], ArrRate[TIME_INT], MaximumSR[CLASS_REQUEST, COMPONENT], Alpha[CLASS_REQUEST], Speed[TYPE_VM, PROVIDER, CONTAINER], Cost[TYPE_VM, PROVIDER, CONTAINER], MaxResponseTime[CLASS_REQUEST, COMPONENT], MinProv, MaxVMPerContainer, MinArrRate[PROVIDER], PartitionComponents[COMPONENT, CONTAINER], Availability[PROVIDER], MaxUnavailability
 
